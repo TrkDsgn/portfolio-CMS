@@ -1,7 +1,7 @@
 # Configuration de Decap CMS — https://decapcms.org/docs/configuration-options/
 backend:
   name: github
-  repo: TrkDsgn/Portfolio-CMS
+  repo: TrkDsgn/portfolio-CMS
   branch: main
   auth_endpoint: api/auth
   commit_messages:
