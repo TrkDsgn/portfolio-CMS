@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{{seo.title}}</title>
+<meta name="description" content="{{seo.description}}">
+<meta property="og:title" content="{{seo.title}}">
+<meta property="og:description" content="{{seo.description}}">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.ico?v=2" sizes="48x48">
+<link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#181616">
+<style>:root{color-scheme:dark}body{margin:0;background:#181616}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Inter+Tight:wght@400;500&family=Roboto+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Montserrat+Alternates:wght@500;600;700&family=Outfit:wght@500;600;800&family=Poppins:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,500&display=swap">
+<link rel="stylesheet" href="/css/styles.css?v={{v}}">
+</head>
+<body>
+<a class="skip link" href="#projets-liste">Aller à la liste des projets</a>
+
+<canvas id="gl" tabindex="0" aria-label="Plan de travail : projets disposés sur une grille. Glisse pour explorer, flèches du clavier pour se déplacer."></canvas>
+
+<!-- Présentation : visible dès la première image -->
+<section class="intro" id="intro" aria-labelledby="intro-title">
+  <h1 class="intro-title" id="intro-title">{{site.name}}, <span class="intro-role">{{site.role}}</span></h1>
+  <p class="intro-hook">{{site.hook}}</p>
+</section>
+
+<!-- Header-cadre -->
+<header class="frame" id="frame">
+  <nav class="f-nav t-label d-only" aria-label="Navigation principale">
+    <a class="link" href="#" data-nav="home">Accueil</a>
+    <a class="link" href="#about" data-nav="about">À propos</a>
+    <a class="link" href="#contact" data-nav="contact">Contact</a>
+  </nav>
+  <div class="f-tag d-only" id="tag1"></div>
+  <a class="f-logo" href="#" data-nav="home" aria-label="Tarik Bouabid, accueil"><span class="logo" aria-hidden="true"></span><span class="name">Tarik Bouabid</span></a>
+  <div class="f-right d-only">
+    <div class="row1 t-label" id="social"></div>
+    <div class="row2"><a class="btn" href="#contact" data-cta></a></div>
+  </div>
+  <nav class="m-nav m-only t-label" aria-label="Navigation">
+    <a class="link" href="#about" data-nav="about" id="m-about">À propos</a>
+    <a class="link" href="#contact" data-nav="contact" id="m-contact">Contact</a>
+  </nav>
+</header>
+
+<div class="hovertag t-micro" id="hovertag" aria-hidden="true"></div>
+
+<div class="ticker t-label" id="ticker" aria-label="Actualités"><div class="ticker-track" id="ticker-track"></div></div>
+<a class="btn m-cta" href="#contact" data-cta></a>
+
+<!-- Liste accessible des projets -->
+<nav class="sr-only" aria-label="Projets"><ul id="projets-liste"></ul></nav>
+
+<!-- About -->
+<aside class="panel panel--about" id="panel-about" aria-label="À propos" tabindex="-1">
+  <h2 class="t-display" id="about-title" data-edit="site.about.title"></h2>
+  <div style="margin-top:var(--s-25)" id="about-body"></div>
+  <div id="about-groups"></div>
+  <div class="cta-row rv" style="--i:12"><a class="btn" href="#contact" data-cta></a></div>
+</aside>
+
+<!-- Contact -->
+<aside class="panel panel--contact" id="panel-contact" aria-label="Contact" tabindex="-1">
+  <div>
+    <h2 class="t-display" id="contact-title" data-edit="site.contact.title" style="white-space:pre-line"></h2>
+    <p class="t-body" style="margin-top:var(--s-25)" id="contact-body" data-edit="site.contact.body"></p>
+    <dl class="c-links t-label rv" style="--i:2" id="contact-links"></dl>
+
+  </div>
+  <form id="form" novalidate class="rv" style="--i:2">
+    <div class="field"><label class="sr-only" for="f-name">Nom</label><input id="f-name" name="name" placeholder="Nom *" autocomplete="name" required><div class="msg t-micro">Indique ton nom.</div></div>
+    <div class="field"><label class="sr-only" for="f-email">Email</label><input id="f-email" name="email" type="email" placeholder="Email *" autocomplete="email" required><div class="msg t-micro">Indique un email valide, par exemple nom@domaine.fr.</div></div>
+    <div class="field"><label class="sr-only" for="f-company">Entreprise</label><input id="f-company" name="company" placeholder="Entreprise" autocomplete="organization"></div>
+    <div class="field"><label class="sr-only" for="f-type">Type de projet</label>
+      <select id="f-type" name="type" required>
+        <option value="" disabled selected>Type de projet *</option>
+        <option>Poste en CDI</option><option>Mission freelance</option><option>Collaboration ou conférence</option><option>Autre</option>
+      </select>
+      <svg class="chev" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 1.5l5 5 5-5"/></svg>
+      <div class="msg t-micro">Choisis un type de projet.</div></div>
+    <div class="field"><label class="sr-only" for="f-msg">Message</label><textarea id="f-msg" name="message" placeholder="Quelques lignes sur ton projet, ton équipe et tes délais *" required></textarea><div class="msg t-micro">Écris quelques lignes sur ton projet.</div></div>
+    <div class="form-foot">
+      <button class="btn" type="submit" id="submit"></button>
+      <div class="status" id="status" hidden aria-live="polite">
+        <span class="t-label accent">Message prêt</span>
+        <p class="t-list" style="margin:0 0 1.2rem">Ta messagerie s'ouvre avec le message prêt à envoyer. Si rien ne s'ouvre, copie-le et envoie-le à <span id="status-email"></span>.</p>
+        <button class="copy t-label" type="button" id="copy-msg">Copier le message</button>
+      </div>
+    </div>
+  </form>
+</aside>
+
+<!-- Pilule (mode projet) -->
+<div class="pill" id="pill" aria-hidden="true">
+  <a class="home link" href="#" data-nav="home" aria-label="Retour à l'accueil"><span class="logo" aria-hidden="true"></span><span>Tarik Bouabid</span></a>
+  <div class="sel">
+    <label class="sr-only" for="p-select">Changer de projet</label>
+    <select id="p-select"></select>
+    <svg class="chev" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 1.5l5 5 5-5"/></svg>
+  </div>
+  <a class="btn btn--sm" href="#contact" data-cta-short></a>
+</div>
+
+<!-- Étude de cas -->
+<main class="project" id="project" aria-live="polite" tabindex="-1"></main>
+
+<script src="/content.js?v={{v}}"></script>
+<script src="/js/loops.js?v={{v}}"></script>
+<script src="/js/main.js?v={{v}}"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+{
+  "order": 3,
+  "slug": "laces",
+  "title": "LACES",
+  "category": "Application mobile",
+  "year": "2023",
+  "summary": "Une app de vente de sneakers qui mise sur l'achat, le troc et les rencontres locales.",
+  "pal": {
+    "bg": "#FBFAF8",
+    "fg": "#2F2B3B",
+    "accent": "#F96995",
+    "soft": "#CFF59D"
+  },
+  "tiles": [
+    "phone",
+    "swatch",
+    "desktop",
+    "type",
+    "phone",
+    "flow"
+  ],
+  "context": "Le brief : imaginer une application e-commerce sur smartphone et tablette, pour les 18-35 ans. LACES vise une communauté de passionnés qui veulent acheter, échanger et vendre leurs sneakers de manière sociale et durable.",
+  "role": [
+    "UX/UI designer",
+    "Direction artistique et identité",
+    "Arborescence et wireframes",
+    "Design system",
+    "Figma, Photoshop, Illustrator"
+  ],
+  "problem": "Une app de revente classique se limite à acheter et vendre. Or les passionnés de sneakers échangent entre eux, racontent l'histoire de leurs paires et se retrouvent dans des événements.",
+  "process": [
+    {
+      "t": "Arborescence",
+      "d": "De la connexion au profil, avec un tunnel d'achat court."
+    },
+    {
+      "t": "Wireframes",
+      "d": "Accueil, recherche, fiche produit, panier, profil."
+    },
+    {
+      "t": "Identité",
+      "d": "Logo, palette TeaGreen, Blush et RaisinBlack, typographie Outfit."
+    },
+    {
+      "t": "Design system",
+      "d": "Atomes, molécules et composants, avec tous leurs états."
+    },
+    {
+      "t": "Maquettes",
+      "d": "L'UI finale, écran par écran."
+    }
+  ],
+  "solution": "Trois usages au même endroit : le troc entre utilisateurs, des annonces qui racontent l'histoire de la paire, et des événements locaux. L'interface emprunte au streetwear : bandeaux défilants, stickers et points à gagner.",
+  "resultsLabel": "En bref",
+  "results": [
+    {
+      "v": "3",
+      "k": "usages : acheter, échanger, vendre"
+    },
+    {
+      "v": "18-35",
+      "k": "ans, le public visé"
+    },
+    {
+      "v": "12",
+      "k": "étapes dans l'arborescence"
+    }
+  ],
+  "cover": "/images/l_hero.webp",
+  "images": [
+    "/images/l_heroSq.webp",
+    "/images/l_shoe1.jpg",
+    "/images/l_hero.webp",
+    "/images/l_duo.webp",
+    "/images/l_shoe2.jpg",
+    "/images/l_screens.webp"
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/l_hero.webp",
+      "span": "full",
+      "ratio": 1.7778,
+      "cap": "LACES",
+      "alt": "Logotype LACES et photo d'un jeune homme assis en Air Max, sur un fond de sneakers"
+    },
+    {
+      "type": "animation",
+      "loop": "m_laces",
+      "span": "full",
+      "cap": "L'app dans le téléphone"
+    },
+    {
+      "type": "animation",
+      "loop": "l_troc",
+      "span": "full",
+      "cap": "Le troc"
+    },
+    {
+      "type": "animation",
+      "loop": "l_arbo",
+      "span": "full",
+      "cap": "Arborescence"
+    },
+    {
+      "type": "image",
+      "src": "/images/l_wire.webp",
+      "span": "full",
+      "ratio": 2.0942,
+      "cap": "Wireframes",
+      "alt": "Wireframes en niveaux de gris des principaux écrans"
+    },
+    {
+      "type": "animation",
+      "loop": "l_colors",
+      "span": "full",
+      "cap": "Couleurs"
+    },
+    {
+      "type": "animation",
+      "loop": "l_type",
+      "span": "full",
+      "cap": "Typographie Outfit"
+    },
+    {
+      "type": "animation",
+      "loop": "l_deco",
+      "span": "full",
+      "cap": "Éléments décoratifs"
+    },
+    {
+      "type": "animation",
+      "loop": "l_bands",
+      "span": "full",
+      "cap": "Bandeaux défilants"
+    },
+    {
+      "type": "image",
+      "src": "/images/l_duo.webp",
+      "span": "full",
+      "ratio": 1.7778,
+      "cap": "Accueil et fiche produit",
+      "alt": "Le logotype LACES à côté de l'écran d'accueil et d'une fiche produit à échanger"
+    },
+    {
+      "type": "image",
+      "src": "/images/l_ds.webp",
+      "span": "full",
+      "ratio": 2.0942,
+      "cap": "Design system",
+      "alt": "Boutons et champs de saisie avec leurs états"
+    },
+    {
+      "type": "animation",
+      "loop": "l_button",
+      "span": "full",
+      "cap": "États du bouton"
+    },
+    {
+      "type": "image",
+      "src": "/images/l_comps.webp",
+      "span": "full",
+      "ratio": 2.6042,
+      "cap": "Composants",
+      "alt": "Carte produit, carte événement et barre de navigation"
+    },
+    {
+      "type": "image",
+      "src": "/images/l_screens.webp",
+      "span": "full",
+      "ratio": 2.5,
+      "cap": "Les écrans",
+      "alt": "Écrans de l'app : ouverture, onboarding, connexion, accueil, recherche, fiche produit, panier, livraison, paiement, confirmation et profil"
+    }
+  ]
+}

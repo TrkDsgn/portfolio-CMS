@@ -1,0 +1,225 @@
+{
+  "order": 4,
+  "slug": "kioui",
+  "title": "Kioui !",
+  "category": "Application mobile",
+  "year": "2023",
+  "summary": "Une app qui redonne le plaisir de cuisiner de manière responsable, même avec un petit budget.",
+  "pal": {
+    "bg": "#FAF1E5",
+    "fg": "#1B1820",
+    "accent": "#DBDF0D",
+    "soft": "#FFD6B5"
+  },
+  "tiles": [
+    "phone",
+    "swatch",
+    "desktop",
+    "type",
+    "phone",
+    "flow"
+  ],
+  "context": "Un workshop UI en école, en décembre 2023. Le sujet : aider à cuisiner de manière plus responsable, sans que cela coûte plus cher.",
+  "role": [
+    "UX/UI designer",
+    "Benchmark et wireframes",
+    "Identité visuelle et design system",
+    "Maquettes de cinq parcours",
+    "Figma"
+  ],
+  "problem": "On jette ce qui reste dans le frigo, faute d'idées. Et l'écologie en cuisine paraît chère, compliquée et culpabilisante.",
+  "process": [
+    {
+      "t": "Brainstorm",
+      "d": "Cadrer le sujet et les envies."
+    },
+    {
+      "t": "Benchmark",
+      "d": "Analyser les apps anti-gaspi."
+    },
+    {
+      "t": "Wireframes",
+      "d": "Valider l'architecture en bleu monochrome."
+    },
+    {
+      "t": "Moodboard",
+      "d": "Trouver le ton visuel."
+    },
+    {
+      "t": "Design system",
+      "d": "Couleurs, typographie, mascotte et motifs."
+    },
+    {
+      "t": "Maquettes",
+      "d": "L'UI finale, écran par écran."
+    }
+  ],
+  "solution": "Partir de ce qu'on a déjà, rendre l'impact visible et transformer chaque geste en points. Le parcours suit le quotidien : scanner le frigo, cuisiner une recette adaptée, acheter près de chez soi ce qui manque, puis voir le CO₂ évité devenir des points.",
+  "resultsLabel": "En bref",
+  "results": [
+    {
+      "v": "4",
+      "k": "gestes, du frigo aux points"
+    },
+    {
+      "v": "5",
+      "k": "parcours maquettés"
+    },
+    {
+      "v": "6",
+      "k": "étapes de démarche"
+    }
+  ],
+  "cover": "/images/k_cover.webp",
+  "coverFy": 0.2,
+  "images": [
+    "/images/k_mascotSq.jpg",
+    "/images/k_dishSq.jpg",
+    "/images/k_cover.webp",
+    "/images/k_pat0.webp",
+    "/images/k_mapSq.jpg",
+    "/images/k_cook.webp"
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/k_cover.webp",
+      "span": "full",
+      "ratio": 1.1614,
+      "cap": "Kioui !",
+      "alt": "Trois écrans de l'app sur fond vert acide, avec la mascotte et les pastilles -1,2 kg évités et +237 points"
+    },
+    {
+      "type": "animation",
+      "loop": "m_kioui",
+      "span": "full",
+      "cap": "L'app dans le téléphone"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_g1.webp",
+      "span": "half",
+      "ratio": 0.8185,
+      "cap": "01 Scanner",
+      "alt": "Geste 1, scanner : l'inventaire du frigo en un geste, écran de scan avec la mascotte"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_g2.webp",
+      "span": "half",
+      "ratio": 0.8185,
+      "cap": "02 Cuisiner",
+      "alt": "Geste 2, cuisiner : le catalogue de recettes adaptées à ce que tu as"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_g3.webp",
+      "span": "half",
+      "ratio": 0.8185,
+      "cap": "03 Acheter local",
+      "alt": "Geste 3, acheter local : la carte des ingrédients manquants près de chez toi"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_g4.webp",
+      "span": "half",
+      "ratio": 0.8185,
+      "cap": "04 Gagner",
+      "alt": "Geste 4, gagner : le récapitulatif qui transforme le CO₂ évité en points"
+    },
+    {
+      "type": "animation",
+      "loop": "k_demarche",
+      "span": "full",
+      "cap": "Démarche"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_wireRow.webp",
+      "span": "full",
+      "ratio": 1.9268,
+      "cap": "Wireframes",
+      "alt": "Wireframes basse fidélité en bleu monochrome : bienvenue, régime alimentaire, connexion, scan et accueil"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_wireA.webp",
+      "span": "half",
+      "ratio": 0.8228,
+      "cap": "Accueil : du wireframe à l'UI",
+      "alt": "Accueil : wireframe bleu à gauche, écran final à droite, le frigo passe en haut et les cartes recettes gagnent de grandes photos"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_wireB.webp",
+      "span": "half",
+      "ratio": 0.8228,
+      "cap": "Scan : du wireframe à l'UI",
+      "alt": "Scan : wireframe bleu à gauche, écran final à droite, la mascotte remplace l'illustration"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_brand.webp",
+      "span": "full",
+      "ratio": 2.6603,
+      "cap": "Logotype et mascotte",
+      "alt": "Le logotype Kioui ! et la mascotte verte qui porte un sac de courses"
+    },
+    {
+      "type": "animation",
+      "loop": "k_motifs",
+      "span": "full",
+      "cap": "Motifs"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_onboard.webp",
+      "span": "full",
+      "ratio": 1.3913,
+      "cap": "Onboarding",
+      "alt": "Trois écrans d'onboarding : bienvenue, régime alimentaire, objectifs"
+    },
+    {
+      "type": "animation",
+      "loop": "k_scan",
+      "span": "full",
+      "cap": "Scanner"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_cook.webp",
+      "span": "full",
+      "ratio": 1.6518,
+      "cap": "Cuisiner",
+      "alt": "Accueil, catalogue par envie, liste Automne et fiche recette avec l'empreinte carbone"
+    },
+    {
+      "type": "animation",
+      "loop": "k_points",
+      "span": "full",
+      "cap": "Impact"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_shop.webp",
+      "span": "full",
+      "ratio": 1.6518,
+      "cap": "Courses et échanges",
+      "alt": "Récapitulatif des ingrédients, carte des points de vente, échange entre voisins et points gagnés"
+    },
+    {
+      "type": "animation",
+      "loop": "k_profil",
+      "span": "full",
+      "cap": "Profil"
+    },
+    {
+      "type": "image",
+      "src": "/images/k_mosaic.webp",
+      "span": "full",
+      "ratio": 0.9602,
+      "cap": "Tous les écrans",
+      "alt": "Mosaïque des écrans de l'application"
+    }
+  ]
+}

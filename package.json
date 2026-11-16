@@ -1,0 +1,15 @@
+{
+  "name": "portfolio-tarik-bouabid",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio de Tarik Bouabid : site statique généré par Node.js, contenu éditable via Decap CMS (/admin).",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "cms": "npx --yes decap-server@3.11.6"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

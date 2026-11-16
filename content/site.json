@@ -1,0 +1,100 @@
+{
+  "name": "Tarik Bouabid",
+  "role": "product designer",
+  "hook": "Je rends les produits complexes simples à utiliser, du parcours jusqu’au composant.",
+  "taglineLeft": [
+    "Produit",
+    "Interface",
+    "Système"
+  ],
+  "cta": "Démarrer un projet",
+  "ctaShort": "Contact",
+  "submit": "Envoyer",
+  "email": "bouabid.tarik1@gmail.com",
+  "links": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/tarik-bouabid-1a6ba3194/"
+    },
+    {
+      "label": "Behance",
+      "url": "https://www.behance.net/tl160"
+    }
+  ],
+  "ticker": [
+    "Product designer chez Signaturit Group",
+    "Ouvert aux missions freelance",
+    "Basé en Île-de-France"
+  ],
+  "about": {
+    "title": "Bonjour, je suis Tarik",
+    "body": [
+      "Product designer chez Signaturit Group, je conçois des parcours SaaS où chaque écran a une seule chose à dire. Mon terrain : les produits techniques et réglementés, qu'il faut rendre évidents.",
+      "Je travaille de la recherche au composant livré : entretiens, cartographie des parcours, prototypes testés, puis design system et suivi avec les développeurs."
+    ],
+    "skills": [
+      {
+        "label": "Produit",
+        "items": [
+          "Recherche utilisateur",
+          "Parcours et architecture",
+          "Prototypage",
+          "Tests d'utilisabilité"
+        ]
+      },
+      {
+        "label": "Interface",
+        "items": [
+          "UI design",
+          "Design systems",
+          "Accessibilité",
+          "Motion d'interface"
+        ]
+      },
+      {
+        "label": "Outils",
+        "items": [
+          "Figma",
+          "FigJam",
+          "Protopie",
+          "Notion"
+        ]
+      }
+    ],
+    "path": [
+      {
+        "year": "Aujourd'hui",
+        "role": "Product designer",
+        "org": "Signaturit Group by Namirial"
+      },
+      {
+        "year": "2024",
+        "role": "Product designer",
+        "org": "UlysseLab"
+      },
+      {
+        "year": "2023",
+        "role": "Product designer",
+        "org": "Altametris"
+      },
+      {
+        "year": "2025",
+        "role": "Direction artistique spé. UX design",
+        "org": "Lisaa"
+      },
+      {
+        "year": "2023",
+        "role": "Concepteur designer UI",
+        "org": "Gobelins"
+      }
+    ]
+  },
+  "contact": {
+    "title": "Un projet ?\nParlons-en.",
+    "body": "Un poste, une mission ou un produit à rendre plus simple : écris-moi quelques lignes, je réponds sous 48 h."
+  },
+  "seo": {
+    "title": "Tarik Bouabid Portfolio",
+    "description": "Portfolio UX/UI de Tarik Bouabid, product designer."
+  }
+}

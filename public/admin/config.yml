@@ -1,0 +1,215 @@
+# Configuration de Decap CMS — https://decapcms.org/docs/configuration-options/
+backend:
+  name: github
+  repo: TrkDsgn/Portfolio-CMS
+  branch: main
+  auth_endpoint: api/auth
+  commit_messages:
+    create: "Ajout du projet « {{slug}} »"
+    update: "Mise à jour de « {{slug}} »"
+    delete: "Suppression de « {{slug}} »"
+    uploadMedia: "Ajout de l'image {{path}}"
+    deleteMedia: "Suppression de l'image {{path}}"
+
+# En local (npm run dev + npm run cms) : édite directement les fichiers, sans GitHub
+local_backend: true
+
+locale: fr
+site_url: /
+display_url: /
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+collections:
+  # ------------------------------------------------------------------ PROJETS
+  - name: projects
+    label: Projets
+    label_singular: Projet
+    description: "Les études de cas affichées sur la grille d'accueil (16 au maximum)."
+    folder: content/projects
+    extension: json
+    format: json
+    create: true
+    delete: true
+    identifier_field: title
+    editor: { preview: false }
+    slug: "{{fields.slug}}"
+    summary: "{{fields.order}}. {{fields.title}} — {{fields.category}} ({{fields.year}})"
+    sortable_fields: [order, title, year]
+    fields:
+      - { name: order, label: "Ordre d'affichage", widget: number, value_type: int, min: 1, default: 99 }
+      - { name: draft, label: "Brouillon (masqué du site)", widget: boolean, default: false, required: false }
+      - name: slug
+        label: Identifiant (URL)
+        hint: "En minuscules, sans espace ni accent (ex. mon-projet). Ne plus le changer après publication."
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', "Minuscules, chiffres et tirets uniquement"]
+      - { name: title, label: Titre }
+      - { name: category, label: Catégorie, hint: "Ex. Application mobile, Design system…" }
+      - { name: year, label: Année }
+      - { name: summary, label: Résumé, widget: text }
+
+      - label: Image de couverture
+        name: cover
+        widget: image
+        required: false
+        hint: "Vignette principale du projet sur la grille et en bas des autres études de cas."
+      - { name: coverFy, label: "Cadrage vertical de la couverture (0 = haut, 1 = bas)", widget: number, value_type: float, min: 0, max: 1, step: 0.05, required: false }
+      - name: images
+        label: Vignettes de la grille
+        label_singular: vignette
+        hint: "Jusqu'à 6 images. Les cases sans image affichent un visuel généré avec la palette."
+        widget: list
+        required: false
+        field: { name: image, label: Image, widget: image }
+      - name: pal
+        label: Palette
+        widget: object
+        collapsed: true
+        fields:
+          - { name: bg, label: Fond, widget: color }
+          - { name: fg, label: Texte, widget: color }
+          - { name: accent, label: Accent, widget: color }
+          - { name: soft, label: "Fond secondaire", widget: color }
+      - name: tiles
+        label: "Visuels générés (cases sans image)"
+        widget: select
+        multiple: true
+        required: false
+        options: [desktop, phone, swatch, type, flow, chart, icons]
+
+      - { name: context, label: Contexte, widget: text, required: false }
+      - { name: role, label: Mon rôle, widget: list, required: false, hint: "Une ligne par élément" }
+      - { name: problem, label: Problème, widget: text, required: false }
+      - name: process
+        label: Démarche
+        label_singular: étape
+        widget: list
+        required: false
+        summary: "{{fields.t}}"
+        fields:
+          - { name: t, label: Étape }
+          - { name: d, label: Détail, widget: text }
+      - { name: solution, label: Solution, widget: text, required: false }
+      - { name: resultsLabel, label: "Titre des résultats", default: "En bref", required: false }
+      - name: results
+        label: Résultats
+        label_singular: résultat
+        widget: list
+        required: false
+        summary: "{{fields.v}} — {{fields.k}}"
+        fields:
+          - { name: v, label: "Valeur (ex. 13 → 6)" }
+          - { name: k, label: Légende }
+
+      - name: media
+        label: Galerie de l'étude de cas
+        label_singular: bloc
+        widget: list
+        required: false
+        typeKey: type
+        types:
+          - label: Image
+            name: image
+            widget: object
+            summary: "🖼 {{fields.cap}}"
+            fields:
+              - { name: src, label: Image, widget: image }
+              - { name: span, label: Largeur, widget: select, default: full, options: [{ label: "Pleine largeur", value: full }, { label: "Demi-largeur", value: half }, { label: "Tiers", value: third }] }
+              - { name: cap, label: Légende, required: false }
+              - { name: alt, label: "Texte alternatif (accessibilité)", required: false }
+              - { name: ratio, label: "Ratio largeur/hauteur (vide = automatique)", widget: number, value_type: float, required: false }
+              - { name: fit, label: Remplissage, widget: select, required: false, options: [{ label: "Recadrer (cover)", value: cover }, { label: "Image entière (contain)", value: contain }] }
+              - { name: pos, label: Cadrage, widget: select, required: false, options: [top, center, bottom] }
+              - { name: bg, label: "Couleur de fond", widget: color, required: false }
+          - label: Animation existante
+            name: animation
+            widget: object
+            summary: "✨ {{fields.loop}} — {{fields.cap}}"
+            fields:
+              - name: loop
+                label: Animation
+                hint: "Animations codées sur mesure (créer une nouvelle animation demande du code)."
+                widget: select
+                options: [intro, audit, ia, typo, catalogue, k_scan, k_points, k_demarche, k_motifs, k_profil, l_troc, l_arbo, l_colors, l_type, l_deco, l_bands, l_button, p_atomic, p_tokens, p_indigo, p_type, p_contrast, m_kioui, m_laces]
+              - { name: span, label: Largeur, widget: select, default: full, options: [{ label: "Pleine largeur", value: full }, { label: "Demi-largeur", value: half }] }
+              - { name: cap, label: Légende, required: false }
+          - label: Bloc de texte
+            name: texte
+            widget: object
+            summary: "📝 {{fields.h}}"
+            fields:
+              - { name: h, label: Titre }
+              - { name: text, label: Texte, widget: text }
+              - name: list
+                label: Liste
+                widget: list
+                required: false
+                fields:
+                  - { name: b, label: "Intitulé" }
+                  - { name: s, label: Détail, widget: text }
+              - { name: span, label: Largeur, widget: hidden, default: full }
+
+  # ------------------------------------------------------------ RÉGLAGES SITE
+  - name: settings
+    label: Réglages du site
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: site
+        label: "Textes généraux, À propos, Contact"
+        file: content/site.json
+        format: json
+        fields:
+          - name: seo
+            label: Référencement
+            widget: object
+            collapsed: true
+            fields:
+              - { name: title, label: "Titre de la page (onglet / Google)" }
+              - { name: description, label: Description, widget: text }
+          - { name: name, label: Nom }
+          - { name: role, label: "Métier (affiché après le nom, ex. product designer)" }
+          - { name: hook, label: "Accroche (sous le titre de l'accueil, une phrase)", widget: text }
+          - { name: taglineLeft, label: "Mots-clés de l'en-tête", widget: list }
+          - { name: cta, label: "Bouton principal" }
+          - { name: ctaShort, label: "Bouton court (mobile)" }
+          - { name: submit, label: "Bouton d'envoi du formulaire" }
+          - { name: email, label: Email }
+          - name: links
+            label: Réseaux
+            label_singular: lien
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { name: label, label: Libellé }
+              - { name: url, label: URL }
+          - { name: ticker, label: "Bandeau défilant", widget: list }
+          - name: about
+            label: À propos
+            widget: object
+            fields:
+              - { name: title, label: Titre }
+              - { name: body, label: Paragraphes, widget: list, field: { name: p, label: Paragraphe, widget: text } }
+              - name: skills
+                label: Compétences
+                label_singular: groupe
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { name: label, label: Groupe }
+                  - { name: items, label: Éléments, widget: list }
+              - name: path
+                label: Parcours
+                label_singular: étape
+                widget: list
+                summary: "{{fields.year}} — {{fields.role}}, {{fields.org}}"
+                fields:
+                  - { name: year, label: Année }
+                  - { name: role, label: Poste }
+                  - { name: org, label: Structure }
+          - name: contact
+            label: Contact
+            widget: object
+            fields:
+              - { name: title, label: Titre, widget: text }
+              - { name: body, label: Texte, widget: text }

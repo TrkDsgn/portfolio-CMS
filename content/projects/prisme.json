@@ -1,0 +1,186 @@
+{
+  "order": 2,
+  "slug": "prisme",
+  "title": "Prisme",
+  "category": "Design system",
+  "year": "2026",
+  "summary": "Un design system et un UI kit construits avec la méthode Atomic Design, des tokens jusqu'aux pages.",
+  "pal": {
+    "bg": "#F6F5FB",
+    "fg": "#14112A",
+    "accent": "#5B4CFF",
+    "soft": "#E1DDFF"
+  },
+  "tiles": [
+    "desktop",
+    "swatch",
+    "type",
+    "phone",
+    "flow",
+    "chart"
+  ],
+  "context": "Créer une bibliothèque complète et documentée qui donne à l'équipe un langage commun, des tokens jusqu'aux pages.",
+  "role": [
+    "Product designer",
+    "Architecture des tokens",
+    "Fondations : couleurs et typographie",
+    "Composants et leurs états",
+    "Audit d'accessibilité WCAG 2.2"
+  ],
+  "problem": "Sans référentiel commun, chaque écran réinvente ses boutons, ses couleurs et ses champs. Le design et le développement divergent, et l'accessibilité arrive trop tard.",
+  "process": [
+    {
+      "t": "Méthode",
+      "d": "Atomic Design : atomes, molécules, organismes, templates, pages."
+    },
+    {
+      "t": "Fondations",
+      "d": "Tokens en trois couches, indigo en 10 nuances, neutres teintés, Poppins."
+    },
+    {
+      "t": "Composants",
+      "d": "Boutons, champs, feedback et cartes, avec tous leurs états."
+    },
+    {
+      "t": "Accessibilité",
+      "d": "Contrastes mesurés et règles WCAG 2.2 AA dans chaque composant."
+    }
+  ],
+  "solution": "Trois couches de tokens : on change une primitive, tout suit ; on change de thème, seule la couche sémantique bouge. Chaque état associe couleur, icône et message, et chaque composant intègre focus visible, cibles de 44 px et labels permanents.",
+  "resultsLabel": "En bref",
+  "results": [
+    {
+      "v": "10",
+      "k": "nuances d'indigo"
+    },
+    {
+      "v": "13",
+      "k": "styles de texte"
+    },
+    {
+      "v": "AA",
+      "k": "WCAG 2.2 sur chaque paire"
+    }
+  ],
+  "cover": "/images/pr_cover.webp",
+  "images": [
+    "/images/pr_cover.webp",
+    "/images/pr_indigo.webp",
+    "/images/pr_cover.webp",
+    "/images/pr_buttons.webp",
+    "/images/pr_fields.webp",
+    "/images/pr_feedback.webp"
+  ],
+  "media": [
+    {
+      "type": "image",
+      "src": "/images/pr_cover.webp",
+      "span": "full",
+      "ratio": 1.7778,
+      "cap": "Prisme",
+      "alt": "Couverture : Prisme, Design System et UI Kit, à côté d'un tableau de bord construit avec ses composants"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_context.webp",
+      "span": "full",
+      "ratio": 1.7778,
+      "cap": "Pourquoi un design system",
+      "alt": "Trois objectifs : cohérence, vitesse, accessibilité"
+    },
+    {
+      "type": "animation",
+      "loop": "p_atomic",
+      "span": "full",
+      "cap": "Atomic Design"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_orga.webp",
+      "span": "full",
+      "ratio": 1.7778,
+      "cap": "De l'atome à l'organisme",
+      "alt": "Bouton et champ, puis champ avec aide et recherche, puis formulaire de création de compte"
+    },
+    {
+      "type": "animation",
+      "loop": "p_tokens",
+      "span": "full",
+      "cap": "Tokens en trois couches"
+    },
+    {
+      "type": "animation",
+      "loop": "p_indigo",
+      "span": "full",
+      "cap": "Indigo, la couleur de l'action"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_neutral.webp",
+      "span": "half",
+      "ratio": 1.7778,
+      "cap": "Neutres",
+      "alt": "Onze neutres teintés d'indigo, du blanc au 900"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_semantic.webp",
+      "span": "half",
+      "ratio": 1.7778,
+      "cap": "États sémantiques",
+      "alt": "Info, succès, avertissement et erreur, avec leurs alertes"
+    },
+    {
+      "type": "animation",
+      "loop": "p_type",
+      "span": "full",
+      "cap": "Typographie Poppins"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_buttons.webp",
+      "span": "full",
+      "ratio": 1.7778,
+      "cap": "Boutons",
+      "alt": "Quatre variantes de bouton dans quatre états, et trois tailles"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_fields.webp",
+      "span": "half",
+      "ratio": 1.7778,
+      "cap": "Formulaires",
+      "alt": "Champs en défaut, focus, erreur et désactivé, cases, radios et interrupteurs"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_feedback.webp",
+      "span": "half",
+      "ratio": 1.7778,
+      "cap": "Feedback",
+      "alt": "Badges de statut, toast, infobulle, barre de progression et carte"
+    },
+    {
+      "type": "animation",
+      "loop": "p_contrast",
+      "span": "full",
+      "cap": "Contrastes mesurés"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_rules.webp",
+      "span": "half",
+      "ratio": 1.7778,
+      "cap": "Règles d'accessibilité",
+      "alt": "Focus visible, cibles de 44 px, pas que la couleur, labels visibles, navigation clavier, texte adaptable"
+    },
+    {
+      "type": "image",
+      "src": "/images/pr_next.webp",
+      "span": "half",
+      "ratio": 1.7778,
+      "cap": "Prochaines étapes",
+      "alt": "Court, moyen et long terme : fondations, couverture, industrialisation"
+    }
+  ]
+}

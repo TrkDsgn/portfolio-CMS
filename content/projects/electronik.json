@@ -1,0 +1,167 @@
+{
+  "order": 1,
+  "slug": "electronik",
+  "title": "Electroni[k]",
+  "category": "Refonte de site web",
+  "year": "2024",
+  "summary": "Refonte du site d'une association d'arts numériques et de culture basée à Rennes.",
+  "pal": {
+    "bg": "#18151E",
+    "fg": "#F3F1EC",
+    "accent": "#7145ED",
+    "soft": "#2F2B3B"
+  },
+  "tiles": [
+    "phone",
+    "type",
+    "desktop",
+    "swatch",
+    "flow",
+    "desktop"
+  ],
+  "context": "Depuis 2001, Electroni[k] accompagne des artistes, des médiateurs culturels et des diffuseurs. Son site ne montrait qu'une partie de ce que fait l'association.",
+  "role": [
+    "UX/UI designer",
+    "Audit et éco-conception",
+    "Architecture de l'information",
+    "Direction artistique et UI",
+    "Figma"
+  ],
+  "problem": "Un audit d'éco-conception et une revue de la navigation ont fait ressortir trois problèmes : une information sans hiérarchie, des filtres et des pages difficiles à atteindre, et un site trop lourd.",
+  "process": [
+    {
+      "t": "Auditer",
+      "d": "Score d'éco-conception D (46/100), page d'accueil de 4,87 Mo, 82 requêtes."
+    },
+    {
+      "t": "Restructurer",
+      "d": "De 13 rubriques sur un seul niveau à 6 sections, le secondaire mis à part."
+    },
+    {
+      "t": "Explorer",
+      "d": "Trois pistes de moodboard, fusionnées dans une grille asymétrique."
+    },
+    {
+      "t": "Concevoir",
+      "d": "Six gabarits desktop, de l'accueil au contact."
+    }
+  ],
+  "solution": "Une grotesque nette pour la structure, une serif italique pour la touche humaine. Une page d'accueil qui présente chaque activité dans l'ordre où on la découvre, et un catalogue filtrable par disponibilité et par type.",
+  "resultsLabel": "En bref",
+  "results": [
+    {
+      "v": "13 → 6",
+      "k": "rubriques dans la navigation"
+    },
+    {
+      "v": "6",
+      "k": "gabarits desktop"
+    },
+    {
+      "v": "3",
+      "k": "pistes de direction artistique"
+    }
+  ],
+  "cover": "/images/hero.jpg",
+  "images": [
+    "/images/heroSq.jpg",
+    "/images/th1.jpg",
+    "/images/hero.jpg",
+    "/images/typo.jpg",
+    "/images/th3.jpg",
+    "/images/trio.jpg"
+  ],
+  "media": [
+    {
+      "type": "animation",
+      "loop": "intro",
+      "span": "full",
+      "cap": "Entrée en scène"
+    },
+    {
+      "type": "animation",
+      "loop": "audit",
+      "span": "full",
+      "cap": "Audit"
+    },
+    {
+      "type": "animation",
+      "loop": "ia",
+      "span": "full",
+      "cap": "Architecture"
+    },
+    {
+      "type": "image",
+      "src": "/images/routes.jpg",
+      "span": "full",
+      "ratio": 3.3195,
+      "cap": "3 pistes, 1 grille",
+      "alt": "Trois moodboards : identité de marque, ludique et poétique, modulaire"
+    },
+    {
+      "type": "animation",
+      "loop": "typo",
+      "span": "half",
+      "cap": "Typographie"
+    },
+    {
+      "type": "image",
+      "src": "/images/colors.jpg",
+      "span": "half",
+      "ratio": 2,
+      "fit": "contain",
+      "bg": "#F3F1EC",
+      "cap": "Palette",
+      "alt": "Palette : quatre gris violacés et quatre violets"
+    },
+    {
+      "type": "image",
+      "src": "/images/trio.jpg",
+      "span": "full",
+      "ratio": 1.4774,
+      "cap": "Une page, toute l'histoire",
+      "alt": "Page d'accueil complète : mission, créations, agenda, parole d'artiste, offres, chiffres et actualités"
+    },
+    {
+      "type": "image",
+      "src": "/images/mission.jpg",
+      "span": "half",
+      "ratio": 1.9,
+      "cap": "Mission",
+      "alt": "Section mission : les trois publics de l'association et des portraits d'artistes"
+    },
+    {
+      "type": "image",
+      "src": "/images/agenda.jpg",
+      "span": "half",
+      "ratio": 1.9,
+      "pos": "top",
+      "cap": "Agenda",
+      "alt": "Agenda : cartes avec tags, dates, lieux et statut en cours ou à venir"
+    },
+    {
+      "type": "animation",
+      "loop": "catalogue",
+      "span": "full",
+      "cap": "Catalogue filtrable"
+    },
+    {
+      "type": "image",
+      "src": "/images/project.jpg",
+      "span": "half",
+      "ratio": 1,
+      "pos": "top",
+      "cap": "Page projet",
+      "alt": "Page projet Instabilités : statut dispo à la diffusion, fiche technique et dossier de présentation"
+    },
+    {
+      "type": "image",
+      "src": "/images/contact.jpg",
+      "span": "half",
+      "ratio": 1,
+      "pos": "top",
+      "cap": "Contact",
+      "alt": "Page contact : carte, adresse, horaires et formulaire"
+    }
+  ]
+}
