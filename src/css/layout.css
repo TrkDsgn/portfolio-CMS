@@ -1,0 +1,404 @@
+/* Structure de l'accueil : plan de travail (canvas), en-tête, bandeau défilant,
+   étiquette de survol, bloc de présentation, bouton mobile, repli sans WebGL. */
+
+/* Plan de travail (canvas WebGL plein écran) */
+#gl {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+
+#gl.dragging {
+  cursor: grabbing;
+}
+
+#gl.on-card {
+  cursor: pointer;
+}
+
+/* En-tête : grille de 5 colonnes, 2 rangées */
+.frame {
+  position: fixed;
+  inset: 0 0 auto;
+  top: env(safe-area-inset-top, 0px);
+  height: var(--head);
+  z-index: 30;
+  display: grid;
+  background: var(--bg-2);
+  grid-template-columns: 8fr 9fr 10fr 9fr 8fr;
+  grid-template-rows: 7rem 1fr;
+  transition:
+    transform 0.5s var(--ease-out),
+    opacity 0.4s var(--ease-dec);
+}
+
+.frame > * {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.f-nav {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch !important;
+}
+
+.f-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding-inline: 0.6rem;
+  overflow: hidden;
+  font-size: var(--fs-label);
+}
+
+.f-tag {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  justify-content: center;
+  container-type: inline-size;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: min(2.6rem, 6cqi);
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1;
+  padding-inline: var(--s-20);
+}
+
+.f-tag .plus {
+  color: var(--accent-text);
+  padding-inline: 0.5em;
+}
+
+.f-logo {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  justify-content: center;
+  text-decoration: none;
+  overflow: hidden;
+  padding-inline: var(--s-20);
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.f-logo .name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 2.8rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.f-logo .logo {
+  height: 4.6rem;
+}
+
+.f-right {
+  grid-column: 4 / span 2;
+  grid-row: 1 / span 2;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.f-right .row1 {
+  height: 7rem;
+  display: flex;
+  text-transform: none;
+  font-family: var(--font-sans);
+  font-size: var(--fs-list);
+  letter-spacing: 0;
+}
+
+.f-right .row1 a {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.f-right .row1 a svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+}
+
+.f-right .row2 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-20);
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.f-right .btn {
+  width: 100%;
+  padding-inline: var(--s-20);
+  font-size: clamp(11px, 8.4cqi, 2.6rem);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.05;
+  height: auto;
+  min-height: var(--s-65);
+  padding-block: 1rem;
+}
+
+/* En-tête masqué pendant une étude de cas */
+.frame.is-hidden {
+  transform: translateY(-102%);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    transform 0.5s var(--ease-out),
+    opacity 0.4s var(--ease-dec),
+    visibility 0s linear 0.5s;
+}
+
+/* Éléments réservés au mobile (m-only) ou au desktop (d-only).
+   Placés après .f-nav : leur !important doit l'emporter sur le sien. */
+.m-only {
+  display: none !important;
+}
+
+/* Bandeau défilant */
+.ticker {
+  position: fixed;
+  z-index: 20;
+  right: max(var(--s-25), env(safe-area-inset-right, 0px));
+  bottom: calc(var(--s-25) + env(safe-area-inset-bottom, 0px));
+  width: min(50rem, calc(44% - 2 * var(--s-25)));
+  overflow: hidden;
+  background: var(--bg-2);
+  border-radius: var(--r-control);
+  height: 4.4rem;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.3s var(--ease-dec);
+}
+
+.is-project .ticker {
+  visibility: hidden;
+}
+
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track span {
+  padding-right: 1.2em;
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Étiquette qui suit la souris au survol d'un projet */
+.hovertag {
+  position: fixed;
+  z-index: 25;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--r-control);
+  background: var(--bg-2);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-dec);
+  white-space: nowrap;
+}
+
+.hovertag.on {
+  opacity: 1;
+}
+
+/* Présentation : qui, quoi, dès le premier écran */
+.intro {
+  position: fixed;
+  z-index: 7;
+  left: max(var(--s-25), env(safe-area-inset-left, 0px));
+  bottom: calc(var(--s-25) + env(safe-area-inset-bottom, 0px));
+  width: calc(16 / 44 * 100% - 2 * var(--s-25));
+  padding: var(--s-30);
+  background: var(--bg-2);
+  border-radius: var(--r-tile);
+}
+
+.intro-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: max(5.6rem, 34px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.intro-role {
+  display: block;
+}
+
+/* Masquée sous les panneaux et les études de cas (un seul titre principal visible à la fois) */
+.is-project .intro,
+body:has(.panel.open) .intro {
+  visibility: hidden;
+}
+
+.intro-hook {
+  margin: var(--s-20) 0 0;
+  font-size: max(2rem, 17px);
+  line-height: 1.45;
+  max-width: 40ch;
+}
+
+/* Bouton « Contact » flottant (mobile uniquement) */
+.m-cta {
+  position: fixed;
+  z-index: 29;
+  left: max(var(--s-20), env(safe-area-inset-left, 0px));
+  bottom: calc(var(--s-20) + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 800px) {
+  .m-cta {
+    display: none;
+  }
+}
+
+.is-project .m-cta {
+  display: none;
+}
+
+/* Repli sans WebGL : une simple grille de vignettes */
+.fallback {
+  position: fixed;
+  inset: var(--head) 0 0;
+  overflow: auto;
+  padding: var(--s-50);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(32rem, 1fr));
+  gap: var(--s-30);
+  z-index: 3;
+}
+
+.fallback a {
+  display: block;
+  text-decoration: none;
+}
+
+.fallback canvas {
+  width: 100%;
+  border-radius: var(--r-tile);
+  display: block;
+}
+
+.fallback .t-micro {
+  display: block;
+  margin-top: 1rem;
+}
+
+/* ---------------------------------------------------------------- Tablette */
+@media (max-width: 1199.98px) and (min-width: 800px) {
+  .frame {
+    grid-template-columns: 10fr 8fr 10fr 8fr 8fr;
+  }
+
+  .f-logo .name {
+    font-size: 2.4rem;
+  }
+
+  .intro {
+    width: calc(50% - 2 * var(--s-25));
+  }
+}
+
+/* ------------------------------------------------------------------ Mobile */
+@media (max-width: 799.98px) {
+  .m-only {
+    display: flex !important;
+  }
+
+  .d-only {
+    display: none !important;
+  }
+
+  .frame {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 1fr;
+    padding-left: max(var(--s-20), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--s-20), env(safe-area-inset-right, 0px));
+  }
+
+  .f-logo {
+    grid-column: 1;
+    grid-row: 1;
+    justify-content: flex-start;
+    padding-inline: 0;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .f-logo .logo {
+    height: 2.8rem;
+  }
+
+  .f-logo .name {
+    font-size: 2.2rem;
+  }
+
+  .m-nav {
+    grid-column: 2;
+    grid-row: 1;
+    gap: var(--s-20);
+  }
+
+  .ticker {
+    top: calc(var(--head) + env(safe-area-inset-top, 0px));
+    bottom: auto;
+    left: 0;
+    transform: none;
+    width: 100%;
+    border-radius: 0;
+    border-width: 0 0 var(--hair);
+    height: 3.4rem;
+  }
+
+  .intro {
+    left: max(var(--s-20), env(safe-area-inset-left, 0px));
+    right: max(var(--s-20), env(safe-area-inset-right, 0px));
+    width: auto;
+    bottom: calc(var(--s-65) + 2 * var(--s-20) + env(safe-area-inset-bottom, 0px));
+    padding: var(--s-20);
+  }
+
+  .intro-title {
+    font-size: 32px;
+  }
+
+  .intro-hook {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,149 @@
+/* Panneaux « À propos » et « Contact » : glissent depuis la gauche sous l'en-tête. */
+
+.panel {
+  position: fixed;
+  z-index: 28;
+  left: 0;
+  top: calc(var(--head) + env(safe-area-inset-top, 0px));
+  bottom: 0;
+  background: var(--bg-2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(-101%);
+  visibility: hidden;
+  transition:
+    transform 0.42s var(--ease-out),
+    visibility 0s linear 0.42s;
+  padding: var(--s-50) var(--s-50) calc(var(--s-90) + env(safe-area-inset-bottom, 0px));
+}
+
+.panel.open {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform 0.42s var(--ease-out),
+    visibility 0s;
+}
+
+/* Les blocs .rv apparaissent l'un après l'autre (--i = rang) à l'ouverture */
+@media (prefers-reduced-motion: no-preference) {
+  .panel .rv {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition:
+      opacity 0.5s var(--ease-dec),
+      transform 0.5s var(--ease-dec);
+  }
+
+  .panel.open .rv {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i, 0) * 60ms + 150ms);
+  }
+}
+
+.panel p + p {
+  margin-top: var(--s-25);
+}
+
+.panel .cta-row {
+  margin-top: var(--s-50);
+}
+
+/* ---------------------------------------------------------------- À propos */
+.panel--about {
+  width: calc(16 / 44 * 100%);
+}
+
+.group {
+  margin-top: var(--s-90);
+}
+
+.group + .group {
+  margin-top: var(--s-50);
+}
+
+.group > .t-label {
+  display: block;
+  margin-bottom: var(--s-30);
+}
+
+/* ----------------------------------------------------------------- Contact */
+.panel--contact {
+  width: calc(30 / 44 * 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-50);
+  align-items: start;
+  overflow-x: hidden;
+}
+
+.c-links {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.4rem 2rem;
+  margin-top: var(--s-50);
+  align-items: center;
+}
+
+.c-links dt {
+  color: var(--ink-subtle);
+}
+
+.c-links dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.c-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 2.4rem;
+}
+
+.c-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.c-social svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+}
+
+.form-foot {
+  margin-top: var(--s-20);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-20);
+  align-items: flex-start;
+}
+
+/* Encart affiché après l'envoi du formulaire */
+.status {
+  background: var(--ink-wash);
+  border-radius: var(--r-control);
+  padding: var(--s-20) var(--s-25);
+  width: 100%;
+}
+
+.status .t-label {
+  display: block;
+  margin-bottom: 0.8rem;
+}
+
+/* ------------------------------------------------------------------ Mobile */
+@media (max-width: 799.98px) {
+  .panel {
+    width: 100% !important;
+    padding: var(--s-30) max(var(--s-20), env(safe-area-inset-right, 0px))
+      calc(12rem + env(safe-area-inset-bottom, 0px)) max(var(--s-20), env(safe-area-inset-left, 0px));
+    border-right: 0;
+  }
+
+  .panel--contact {
+    grid-template-columns: 1fr;
+  }
+}

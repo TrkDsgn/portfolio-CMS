@@ -1,0 +1,125 @@
+/* Socle : taille de base fluide, réglages globaux, accessibilité, styles de texte. */
+
+html {
+  font-size: clamp(5px, calc(10 * 100vw / var(--artboard)), var(--rem-max));
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: none;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.4;
+}
+
+/* Bande de la couleur du fond sous l'encoche des téléphones */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 90;
+  background: var(--bg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Accessibilité */
+:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 0.5rem;
+}
+
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip {
+  position: fixed;
+  left: 2rem;
+  top: 2rem;
+  z-index: 100;
+  background: var(--bg-2);
+  padding: 1rem 1.5rem;
+  transform: translateY(-300%);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+/* Styles de texte */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--fs-display);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.t-body {
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.t-list {
+  font-size: var(--fs-list);
+  line-height: 1.5;
+}
+
+.t-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-label);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.t-micro {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-micro);
+  line-height: 1.4;
+}
+
+.accent {
+  color: var(--accent-text);
+}
+
+.muted {
+  color: var(--ink-muted);
+}

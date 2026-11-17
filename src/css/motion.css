@@ -1,0 +1,35 @@
+/* Mouvement : apparition du plan de travail, découpe des textes en mots, réglage
+   « réduire les animations » du système. */
+
+/* Le plan de travail apparaît en fondu quand ses vignettes sont prêtes ; le texte est là tout de suite */
+#gl {
+  transition: opacity 1.2s var(--ease-dec);
+}
+
+body.loading #gl {
+  opacity: 0;
+}
+
+/* Apparition des textes : chaque mot (.wi) monte depuis un masque (.w). Voir reveal.js */
+.w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+.wi {
+  display: inline-block;
+}
+
+/* « Réduire les animations » : tout est affiché immédiatement, rien ne bouge */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}

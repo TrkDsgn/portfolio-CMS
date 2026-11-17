@@ -1,0 +1,88 @@
+/* Variables de design : couleurs, typographie, espacements, rayons, courbes d'animation.
+   Échelle fluide : tout est dessiné sur un plan de 1800 px (1rem = 10 px à 1800 px de large),
+   puis 1440 px en tablette et 390 px en mobile (voir html{font-size} dans base.css). */
+
+:root {
+  --artboard: 1800;
+  --rem-max: 12px;
+
+  /* Couleurs */
+  --bg: #181616;
+  --bg-deep: #181616;
+  --bg-2: #211e1d; /* surface : un pas de ton au-dessus du fond, à la place des filets */
+  --ink: #fffddb;
+  --ink-muted: rgb(255 253 219 / 0.55);
+  --ink-subtle: #7d7a6c;
+  --ink-wash: rgb(255 253 219 / 0.05); /* fond très léger (encart « Message prêt ») */
+  --accent: #3fcb89;
+  --accent-hover: #5fd9a0;
+  --accent-text: #3fcb89;
+  --on-accent: #121212;
+  --line: #33302e; /* grille du plan de travail (canvas) et bordures de champs */
+  --caption-bg: rgb(18 18 18 / 0.78);
+  --hover-wash: rgb(255 255 255 / 0.06);
+
+  /* Typographie */
+  --font-display: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
+  --font-sans: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fs-display: 5rem;
+  --fs-body: max(1.8rem, 16px);
+  --fs-list: var(--fs-body);
+  --fs-label: max(1.6rem, 14px);
+  --fs-micro: var(--fs-label);
+  --fs-cta: 2.4rem;
+
+  /* Espacements */
+  --s-5: 0.5rem;
+  --s-10: 1rem;
+  --s-20: 2rem;
+  --s-25: 2.5rem;
+  --s-30: 3rem;
+  --s-50: 5rem;
+  --s-65: 6.5rem;
+  --s-90: 9rem;
+
+  /* Rayons */
+  --r-tile: 0.5rem;
+  --r-control: 1rem;
+
+  /* Mise en page */
+  --head: 18rem; /* hauteur de l'en-tête */
+  --cols: 44; /* la page est pensée sur 44 colonnes */
+  --hair: 1px;
+
+  /* Courbes d'animation */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-dec: cubic-bezier(0, 0, 0.2, 1);
+
+  color-scheme: dark;
+}
+
+@media (min-resolution: 2dppx) {
+  :root {
+    --hair: 0.5px;
+  }
+}
+
+/* Tablette */
+@media (max-width: 1199.98px) {
+  :root {
+    --artboard: 1440;
+  }
+}
+
+/* Mobile */
+@media (max-width: 799.98px) {
+  :root {
+    --artboard: 390;
+    --rem-max: 11px;
+    --head: 5.6rem;
+    --fs-display: 3.4rem;
+    --fs-body: 16px;
+    --fs-list: 16px;
+    --fs-label: 14px;
+    --fs-micro: 14px;
+    --fs-cta: 2.4rem;
+  }
+}
