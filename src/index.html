@@ -58,7 +58,7 @@
 
 <!-- About -->
 <aside class="panel panel--about" id="panel-about" aria-label="À propos" tabindex="-1">
-  <h2 class="t-display" id="about-title" data-edit="site.about.title"></h2>
+  <h2 class="t-display" id="about-title"></h2>
   <div style="margin-top:var(--s-25)" id="about-body"></div>
   <div id="about-groups"></div>
   <div class="cta-row rv" style="--i:12"><a class="btn" href="#contact" data-cta></a></div>
@@ -67,8 +67,8 @@
 <!-- Contact -->
 <aside class="panel panel--contact" id="panel-contact" aria-label="Contact" tabindex="-1">
   <div>
-    <h2 class="t-display" id="contact-title" data-edit="site.contact.title" style="white-space:pre-line"></h2>
-    <p class="t-body" style="margin-top:var(--s-25)" id="contact-body" data-edit="site.contact.body"></p>
+    <h2 class="t-display" id="contact-title" style="white-space:pre-line"></h2>
+    <p class="t-body" style="margin-top:var(--s-25)" id="contact-body"></p>
     <dl class="c-links t-label rv" style="--i:2" id="contact-links"></dl>
 
   </div>
@@ -110,7 +110,6 @@
 <main class="project" id="project" aria-live="polite" tabindex="-1"></main>
 
 <script src="/content.js?v={{v}}"></script>
-<script src="/js/loops.js?v={{v}}"></script>
-<script src="/js/main.js?v={{v}}"></script>
+<script type="module" src="/js/main.js?v={{v}}"></script>
 </body>
 </html>
