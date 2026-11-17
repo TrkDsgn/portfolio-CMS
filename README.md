@@ -24,7 +24,8 @@ src/
     main.js              point d'entrée (démarrage)
     content.js           contenu du CMS          state.js       état partagé
     page.js              remplissage des textes  camera.js      géométrie de la grille
-    webgl/               rendu du plan de travail (shaders, couvertures, atlas)
+    webgl/               rendu du plan de travail : sphère (shaders), couvertures, traînée de couleur (ink.js)
+    loader.js            écran de chargement : globe qui grandit jusqu’à devenir l’accueil
     animation.js         boucle d'animation      input.js       souris, doigt, clavier
     router.js            navigation              reveal.js      apparition des textes
     project/             étude de cas, galerie   contact.js     formulaire

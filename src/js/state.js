@@ -17,7 +17,12 @@ export const camera = {
   curve: 0.32, // courbure de la grille (0 = plate)
   shift: 0, // décalage horizontal quand un panneau est ouvert
   aberration: 0, // séparation des couleurs pendant un mouvement rapide
-  lineTint: 0, // teinte des lignes de la grille (1 = couleur d'accent), à la fin du chargement
+  orbit: 0, // 0 = accueil, 1 = globe vu de loin (écran de chargement)
+  globeCenter: null, // position du globe à l'écran pendant le chargement
+  globeRadius: 80, // rayon du globe à l'écran pendant le chargement (px)
+  spectrum: 0, // lignes colorées par le dégradé (1 = globe du chargement)
+  tiles: 1, // opacité des vignettes (0 pendant le chargement)
+  time: 0, // horloge (s), pour le défilement des couleurs
   dir: [0, 1], // direction du mouvement
   hover: [1e6, 1e6], // cluster survolé
   hoverAmt: 0,

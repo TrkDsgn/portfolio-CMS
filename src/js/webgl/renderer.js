@@ -2,9 +2,10 @@
 import { mobileQuery, reducedMotion } from "../utils.js";
 import { PROJECTS } from "../content.js";
 import { camera, dom, MAX_PROJECTS, gridCount } from "../state.js";
-import { cellSize, viewCenter, viewRadius, curveNow } from "../camera.js";
+import { cellSize, viewCenter, projection, curveNow } from "../camera.js";
 import { VERTEX_SHADER, FRAGMENT_SHADER } from "./shaders.js";
 import { drawProjectCover } from "./tiles.js";
+import { inkCanvas, updateInk, inkActive, resizeInk, readInkColors } from "./ink.js";
 
 const gl = dom.canvas.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false });
 /** Colonnes de l'atlas (2 × 2 couvertures jusqu'à 4 projets, sinon 4 × 4). */
@@ -14,8 +15,12 @@ const UNIFORMS = [
   "uDpr",
   "uOff",
   "uZoom",
-  "uCurve",
   "uCenter",
+  "uFocal",
+  "uTilt",
+  "uRadius",
+  "uHeight",
+  "uCurve",
   "uCell",
   "uTex",
   "uN",
@@ -24,18 +29,28 @@ const UNIFORMS = [
   "uBg",
   "uLine",
   "uDeep",
-  "uR",
+  "uCols",
   "uAb",
   "uDir",
-  "uCols",
+  "uTiles",
+  "uSpectrum",
+  "uTime",
+  "uS0",
+  "uS1",
+  "uS2",
+  "uS3",
+  "uInk",
+  "uInkOn",
 ];
 const uni = {};
 let atlasTexture;
+let inkTexture;
 let colors = {};
 
 /** Prépare WebGL. Renvoie false si le navigateur ne le permet pas. */
 export function initGL() {
   if (!gl) return false;
+  gl.getExtension("OES_standard_derivatives"); // filets nets à toutes les distances (fwidth)
   const compile = (type, source) => {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -62,6 +77,15 @@ export function initGL() {
   atlasTexture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, atlasTexture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([40, 38, 36, 255]));
+
+  // Texture de l'encre (traînée de couleur de la souris)
+  inkTexture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, inkTexture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   return true;
 }
 
@@ -103,15 +127,16 @@ function toRGB(value) {
   return [m[0] / 255, m[1] / 255, m[2] / 255];
 }
 
-/** Lit les couleurs de la grille dans les variables CSS (--bg, --line, --bg-deep, --accent). */
+/** Lit les couleurs de la grille dans les variables CSS (--bg, --line, --bg-deep, --spectrum-1…4). */
 export function readColors() {
   const cs = getComputedStyle(document.documentElement);
   colors = {
     bg: toRGB(cs.getPropertyValue("--bg")),
     line: toRGB(cs.getPropertyValue("--line")),
     deep: toRGB(cs.getPropertyValue("--bg-deep")),
-    tint: toRGB(cs.getPropertyValue("--accent")),
+    spectrum: [1, 2, 3, 4].map(i => toRGB(cs.getPropertyValue(`--spectrum-${i}`))),
   };
+  readInkColors();
   camera.dirty = true;
 }
 
@@ -127,32 +152,53 @@ export function resize() {
   dom.canvas.width = Math.round(camera.W * camera.dpr);
   dom.canvas.height = Math.round(camera.H * camera.dpr);
   if (gl) gl.viewport(0, 0, dom.canvas.width, dom.canvas.height);
+  resizeInk(camera.W, camera.H);
   camera.dirty = true;
+}
+
+/** Met à jour l'encre ; renvoie true si elle bouge encore (il faut redessiner). */
+export function stepInk(dt) {
+  if (!gl || !updateInk(dt)) return false;
+  gl.activeTexture(gl.TEXTURE1);
+  gl.bindTexture(gl.TEXTURE_2D, inkTexture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, inkCanvas);
+  return true;
 }
 
 /** Dessine une image du plan de travail. */
 export function render() {
   if (!gl) return;
   const [cx, cy] = viewCenter();
+  const { focal, tilt, radius, height } = projection();
   gl.uniform2f(uni.uRes, dom.canvas.width, dom.canvas.height);
   gl.uniform1f(uni.uDpr, camera.dpr);
   gl.uniform2f(uni.uOff, camera.off[0], camera.off[1]);
   gl.uniform1f(uni.uZoom, camera.zoom);
-  gl.uniform1f(uni.uCurve, curveNow());
   gl.uniform2f(uni.uCenter, cx, cy);
-  gl.uniform1f(uni.uR, viewRadius());
+  gl.uniform1f(uni.uFocal, focal);
+  gl.uniform1f(uni.uTilt, tilt);
+  gl.uniform1f(uni.uRadius, radius);
+  gl.uniform1f(uni.uHeight, height);
+  gl.uniform1f(uni.uCurve, curveNow());
   gl.uniform1f(uni.uCell, cellSize());
-  gl.uniform1i(uni.uTex, 0);
   gl.uniform1f(uni.uN, gridCount);
   gl.uniform2f(uni.uHover, camera.hover[0], camera.hover[1]);
   gl.uniform1f(uni.uHoverAmt, camera.hoverAmt);
   gl.uniform3fv(uni.uBg, colors.bg);
-  const t = camera.lineTint;
-  gl.uniform3fv(uni.uLine, t > 0 ? colors.line.map((v, i) => v + (colors.tint[i] - v) * t) : colors.line);
+  gl.uniform3fv(uni.uLine, colors.line);
   gl.uniform3fv(uni.uDeep, colors.deep);
   gl.uniform1f(uni.uCols, ATLAS_COLS);
   gl.uniform1f(uni.uAb, reducedMotion.matches ? 0 : camera.aberration);
   gl.uniform2f(uni.uDir, camera.dir[0], camera.dir[1]);
+  gl.uniform1f(uni.uTiles, camera.tiles);
+  gl.uniform1f(uni.uSpectrum, camera.spectrum);
+  gl.uniform1f(uni.uTime, camera.time);
+  ["uS0", "uS1", "uS2", "uS3"].forEach((name, i) => gl.uniform3fv(uni[name], colors.spectrum[i]));
+  gl.uniform1f(uni.uInkOn, inkActive() ? 1 : 0);
+  gl.uniform1i(uni.uTex, 0);
+  gl.uniform1i(uni.uInk, 1);
+  gl.activeTexture(gl.TEXTURE1);
+  gl.bindTexture(gl.TEXTURE_2D, inkTexture);
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, atlasTexture);
   gl.drawArrays(gl.TRIANGLES, 0, 3);

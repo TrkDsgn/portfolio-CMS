@@ -16,7 +16,7 @@ import { initGL, buildAtlas, readColors, resize } from "./webgl/renderer.js";
 import { startAnimation, updateDom } from "./animation.js";
 import { initInput } from "./input.js";
 import { initRouter, go, panelShift } from "./router.js";
-import { startLoader, setLoaderProgress, finishLoader } from "./loader.js";
+import { startLoader, setLoaderProgress, finishLoader, placeGlobe } from "./loader.js";
 import { startLoopClock } from "./project/gallery.js";
 import { initContact } from "./contact.js";
 import { showFallback } from "./fallback.js";
@@ -47,6 +47,7 @@ camera.prev = camera.off.slice();
 
 addEventListener("resize", () => {
   resize();
+  placeGlobe();
   camera.shift = panelShift(app.view);
 });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readColors);

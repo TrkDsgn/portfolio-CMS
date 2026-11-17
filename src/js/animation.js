@@ -3,7 +3,7 @@
 import { $, reducedMotion, mobileQuery } from "./utils.js";
 import { camera, app, dom } from "./state.js";
 import { stepTweens, isTweening } from "./camera.js";
-import { render } from "./webgl/renderer.js";
+import { render, stepInk } from "./webgl/renderer.js";
 
 /** Vitesse de la dérive automatique de l'accueil, en px/s. */
 const DRIFT = 16;
@@ -22,12 +22,18 @@ export function updateDom() {
 function frame(now) {
   const dt = Math.min(64, now - (lastNow || now));
   lastNow = now;
+  camera.time += dt / 1000;
   stepTweens(now);
+  // globe du chargement : les couleurs défilent en continu
+  if (camera.spectrum > 0) camera.dirty = true;
+  // traînée de couleur de la souris
+  if (stepInk(dt)) camera.dirty = true;
 
   // Dérive lente quand personne n'interagit
   const still = Math.abs(camera.vel[0]) + Math.abs(camera.vel[1]) < 0.5;
   if (app.view !== "project" && !app.dragging && app.hoverId === -1 && !reducedMotion.matches && still) {
-    camera.off[0] += (DRIFT * dt) / 1000 / camera.zoom;
+    // vu de loin (chargement), le globe tourne nettement plus vite
+    camera.off[0] += (DRIFT * (1 + 40 * camera.orbit) * dt) / 1000 / camera.zoom;
     camera.dirty = true;
   }
 
@@ -58,7 +64,7 @@ function frame(now) {
   const my = camera.off[1] - camera.prev[1];
   camera.prev = camera.off.slice();
   const speed = Math.hypot(mx, my) * (16 / Math.max(dt, 1)) * camera.zoom;
-  const target = app.view === "project" ? 0 : Math.min(1, Math.max(0, (speed - 3) / 32));
+  const target = app.view === "project" || camera.orbit > 0 ? 0 : Math.min(1, Math.max(0, (speed - 3) / 32));
   camera.aberration += (target - camera.aberration) * (target > camera.aberration ? 0.3 : 0.08);
   if (speed > 0.5) {
     const length = Math.hypot(mx, my) || 1;

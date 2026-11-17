@@ -3,6 +3,7 @@
 import { $, reducedMotion, ease } from "./utils.js";
 import { PROJECTS } from "./content.js";
 import { camera, app, dom } from "./state.js";
+import { inkPointer, inkLift } from "./webgl/ink.js";
 import { tween, screenToWorld, clusterAt, clusterCenter, nearestCluster, cellSize } from "./camera.js";
 
 const { canvas, hovertag } = dom;
@@ -46,6 +47,7 @@ function onPointerDown(e) {
 }
 
 function onPointerMove(e) {
+  if (app.view !== "project" && e.pointerType === "mouse") inkPointer(e.clientX, e.clientY);
   if (app.dragging) {
     const dx = e.clientX - last[0];
     const dy = e.clientY - last[1];
@@ -62,8 +64,8 @@ function onPointerMove(e) {
     return;
   }
   if (app.view === "home" && e.pointerType === "mouse") {
-    const [wx, wy] = screenToWorld(e.clientX, e.clientY);
-    setHover(clusterAt(wx, wy), e.clientX, e.clientY);
+    const point = screenToWorld(e.clientX, e.clientY);
+    setHover(point && clusterAt(point[0], point[1]), e.clientX, e.clientY);
   }
 }
 
@@ -75,8 +77,8 @@ function endDrag(e) {
   if (reducedMotion.matches) camera.vel = [0, 0];
   if (moved) return;
   camera.vel = [0, 0];
-  const [wx, wy] = screenToWorld(e.clientX, e.clientY);
-  const cluster = clusterAt(wx, wy);
+  const point = screenToWorld(e.clientX, e.clientY);
+  const cluster = point && clusterAt(point[0], point[1]);
   if (cluster) {
     app.pendingCluster = cluster;
     location.hash = "projet-" + PROJECTS[cluster.id].slug;
@@ -132,6 +134,7 @@ export function initInput() {
   canvas.addEventListener("pointerup", endDrag);
   canvas.addEventListener("pointercancel", endDrag);
   canvas.addEventListener("pointerleave", () => {
+    inkLift();
     if (!app.dragging) setHover(null);
   });
   canvas.addEventListener("wheel", onWheel, { passive: false });
