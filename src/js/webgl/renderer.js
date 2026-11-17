@@ -9,8 +9,26 @@ import { drawProjectCover } from "./tiles.js";
 const gl = dom.canvas.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false });
 /** Colonnes de l'atlas (2 × 2 couvertures jusqu'à 4 projets, sinon 4 × 4). */
 const ATLAS_COLS = PROJECTS.length <= 4 ? 2 : 4;
-const UNIFORMS = ["uRes", "uDpr", "uOff", "uZoom", "uCurve", "uCenter", "uCell", "uTex", "uN", "uHover", "uHoverAmt",
-  "uBg", "uLine", "uDeep", "uR", "uAb", "uDir", "uCols"];
+const UNIFORMS = [
+  "uRes",
+  "uDpr",
+  "uOff",
+  "uZoom",
+  "uCurve",
+  "uCenter",
+  "uCell",
+  "uTex",
+  "uN",
+  "uHover",
+  "uHoverAmt",
+  "uBg",
+  "uLine",
+  "uDeep",
+  "uR",
+  "uAb",
+  "uDir",
+  "uCols",
+];
 const uni = {};
 let atlasTexture;
 let colors = {};

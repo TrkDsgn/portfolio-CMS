@@ -1,9 +1,9 @@
 /* Galerie d'une étude de cas : images, animations codées et blocs de texte (champ « media » du CMS).
    Les animations visibles partagent une seule horloge (~30 images/s) ; celles hors écran ne sont pas dessinées. */
 import { $, $$, reducedMotion } from "../utils.js";
-import { ASSETS } from "../content.js";
+import { ASSETS, IMAGES } from "../content.js";
 import { app, dom } from "../state.js";
-import { getLoop, LOOP_IMAGES } from "../loops/index.js";
+import { getLoop, imagesFor } from "../loops/index.js";
 import { revealText, EASE_RISE } from "../reveal.js";
 
 const loopImages = {};
@@ -12,10 +12,11 @@ let visibilityObserver = null;
 let resizeObserver = null;
 let galleryObserver = null;
 
-/** Charge (une fois) les images utilisées dans les dessins des animations.
+/** Charge (une fois) les images dessinées par les animations du projet.
     Animations réduites : l'image fixe est redessinée quand une image arrive (sinon elle resterait vide). */
-function preloadLoopImages() {
-  LOOP_IMAGES.forEach(name => {
+function preloadLoopImages(P) {
+  const names = imagesFor(P.media.filter(item => item.loop).map(item => item.loop));
+  names.forEach(name => {
     if (!loopImages[name] && ASSETS[name]) {
       const image = new Image();
       image.addEventListener("load", () => {
@@ -70,10 +71,16 @@ function textBlock(item) {
 }
 
 const SPAN_CLASS = { full: "g4", half: "g2", third: "g3" };
+/* Largeur affichée des images selon leur largeur dans la galerie (pour choisir la bonne version) */
+const SIZES = {
+  full: "(max-width:1199.98px) 100vw, 62vw",
+  half: "(max-width:799.98px) 100vw, (max-width:1199.98px) 50vw, 31vw",
+  third: "(max-width:799.98px) 100vw, (max-width:1199.98px) 50vw, 21vw",
+};
 
 /** Remplit #gallery avec les médias du projet. */
 export function renderMedia(P) {
-  preloadLoopImages();
+  preloadLoopImages(P);
   const gallery = $("#gallery");
   visibilityObserver = new IntersectionObserver(
     entries =>
@@ -89,6 +96,7 @@ export function renderMedia(P) {
     }),
   );
 
+  let imageCount = 0;
   P.media.forEach((item, i) => {
     if (item.text) {
       gallery.appendChild(textBlock(item));
@@ -116,13 +124,21 @@ export function renderMedia(P) {
       visibilityObserver.observe(fig);
       resizeObserver.observe(fig);
     } else {
-      fig.style.aspectRatio = item.ratio || "16/9";
+      const src = item.src || ASSETS[item.img];
+      const info = IMAGES[src];
+      // sans ratio indiqué, le cadre prend les proportions de l'image (connues au build, sinon au chargement)
+      fig.style.aspectRatio = item.ratio || (info ? info.w + "/" + info.h : "16/9");
       const image = document.createElement("img");
-      image.src = item.src || ASSETS[item.img];
+      if (info && info.srcset.length > 1) {
+        image.srcset = info.srcset.map(([width, url]) => `${url} ${width}w`).join(", ");
+        image.sizes = SIZES[fig.classList.contains("rs2") ? "half" : item.span] || SIZES.half;
+      }
+      // les deux premiers visuels sont chargés tout de suite, les suivants en approchant
+      if (imageCount++ >= 2) image.loading = "lazy";
+      image.src = src;
       image.alt = item.alt || item.cap || "";
       image.decoding = "async";
-      // sans ratio indiqué, le cadre prend les proportions de l'image
-      if (!item.ratio) {
+      if (!item.ratio && !info) {
         image.addEventListener(
           "load",
           () => {

@@ -59,7 +59,8 @@ export const DRAW = {
     c.textBaseline = "alphabetic";
     wrapText(c, P.title, bx + bw * 0.07, by + bh * 0.3, bw * 0.48, bh * 0.11);
     c.fillStyle = hexA(p.fg, 0.35);
-    for (let i = 0; i < 3; i++) c.fillRect(bx + bw * 0.07, by + bh * (0.55 + i * 0.05), bw * (0.38 - i * 0.06), bh * 0.018);
+    for (let i = 0; i < 3; i++)
+      c.fillRect(bx + bw * 0.07, by + bh * (0.55 + i * 0.05), bw * (0.38 - i * 0.06), bh * 0.018);
     c.fillStyle = p.accent;
     roundRect(c, bx + bw * 0.07, by + bh * 0.74, bw * 0.16, bh * 0.08, bh * 0.04);
     c.fill();
@@ -142,7 +143,8 @@ export const DRAW = {
     const nw = w * (wide ? 0.16 : 0.24);
     const nh = h * 0.16;
     const pts = [];
-    for (let i = 0; i < n; i++) pts.push([x + w * (0.1 + (i * (0.8 - nw / w)) / (n - 1)), y + h * (i % 2 ? 0.58 : 0.28)]);
+    for (let i = 0; i < n; i++)
+      pts.push([x + w * (0.1 + (i * (0.8 - nw / w)) / (n - 1)), y + h * (i % 2 ? 0.58 : 0.28)]);
     c.strokeStyle = hexA(p.fg, 0.5);
     c.lineWidth = Math.max(1, h * 0.006);
     c.setLineDash([h * 0.015, h * 0.015]);
@@ -150,9 +152,12 @@ export const DRAW = {
       c.beginPath();
       c.moveTo(pts[i][0] + nw, pts[i][1] + nh / 2);
       c.bezierCurveTo(
-        pts[i][0] + nw * 1.4, pts[i][1] + nh / 2,
-        pts[i + 1][0] - nw * 0.4, pts[i + 1][1] + nh / 2,
-        pts[i + 1][0], pts[i + 1][1] + nh / 2,
+        pts[i][0] + nw * 1.4,
+        pts[i][1] + nh / 2,
+        pts[i + 1][0] - nw * 0.4,
+        pts[i + 1][1] + nh / 2,
+        pts[i + 1][0],
+        pts[i + 1][1] + nh / 2,
       );
       c.stroke();
     }

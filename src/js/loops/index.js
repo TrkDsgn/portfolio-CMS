@@ -10,12 +10,19 @@ import mockups from "./mockups.js";
 
 export const LOOPS = { ...electronik, ...kioui, ...laces, ...prisme, ...mockups };
 
-/** Images utilisées par les animations (noms de fichiers de public/images, sans extension). */
-export const LOOP_IMAGES = [
-  "hero", "th0", "th1", "th2", "th3", "th4", "th5",
-  "k_logo", "k_scanMascot", "k_pat0", "k_pat1", "k_pat2", "k_pat3", "k_pat4", "k_pat5", "k_pat6",
-  "l_shoe1", "l_shoe2", "l_logo",
-  "m_k_home", "m_k_recipe", "m_k_profile", "m_l_splash", "m_l_home", "m_l_product",
-];
+/** Images dessinées par chaque animation (noms de fichiers de public/images, sans extension).
+    Seules celles des animations du projet affiché sont chargées. */
+const LOOP_IMAGES = {
+  intro: ["hero"],
+  catalogue: ["th0", "th1", "th2", "th3", "th4", "th5"],
+  k_scan: ["k_logo", "k_scanMascot"],
+  k_motifs: ["k_pat0", "k_pat1", "k_pat2", "k_pat3", "k_pat4", "k_pat5", "k_pat6"],
+  l_troc: ["l_shoe1", "l_shoe2"],
+  m_kioui: ["k_logo", "m_k_home", "m_k_recipe", "m_k_profile"],
+  m_laces: ["l_logo", "m_l_splash", "m_l_home", "m_l_product"],
+};
+
+/** Images nécessaires à une liste d'animations. */
+export const imagesFor = names => [...new Set(names.flatMap(name => LOOP_IMAGES[name] || []))];
 
 export const getLoop = name => LOOPS[name] || null;

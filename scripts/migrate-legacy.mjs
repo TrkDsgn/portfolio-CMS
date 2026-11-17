@@ -10,12 +10,25 @@ import path from "node:path";
 import vm from "node:vm";
 
 const SRC = process.argv[2];
-if (!SRC) { console.error("Usage : node scripts/migrate-legacy.mjs <index.html>"); process.exit(1); }
+if (!SRC) {
+  console.error("Usage : node scripts/migrate-legacy.mjs <index.html>");
+  process.exit(1);
+}
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const html = fs.readFileSync(SRC, "utf8");
-const out = (rel, data) => { const p = path.join(ROOT, rel); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, data); };
+const out = (rel, data) => {
+  const p = path.join(ROOT, rel);
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  fs.writeFileSync(p, data);
+};
 
-const EXT = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png", "image/svg+xml": "svg", "image/gif": "gif" };
+const EXT = {
+  "image/webp": "webp",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/svg+xml": "svg",
+  "image/gif": "gif",
+};
 function writeDataUri(name, uri) {
   const m = uri.match(/^data:([a-z]+\/[a-z+]+);base64,(.+)$/);
   if (!m) throw new Error("data URI invalide pour " + name);
@@ -84,7 +97,8 @@ console.log(`Projets : ${PROJECTS.map(p => p.slug).join(", ")}`);
 let mainJs = mainJsRaw;
 // Contenu et images → fournis par /content.js (généré au build depuis content/)
 mainJs = mainJs.replace(assetsLine[0], "const ASSETS = window.__CONTENT.assets;");
-mainJs = mainJs.slice(0, mainJs.indexOf("const SITE = {")) +
+mainJs =
+  mainJs.slice(0, mainJs.indexOf("const SITE = {")) +
   "const SITE = window.__CONTENT.site;\nconst PROJECTS = window.__CONTENT.projects;" +
   mainJs.slice(mainJs.indexOf("\n];", mainJs.indexOf("const PROJECTS = [")) + 3);
 mainJs = mainJs.replace(logoMatch[0], `setProperty("--logo", 'url("${logoUrl}")')`);
@@ -96,8 +110,11 @@ mainJs = mainJs.replace("\napplyEdits();", "");
 // Images ajoutées depuis le CMS : sans ratio renseigné, on prend celui de l'image
 const IMG_LINE = 'im.decoding="async";';
 if (mainJs.split(IMG_LINE).length !== 2) throw new Error("ligne image introuvable ou multiple");
-mainJs = mainJs.replace(IMG_LINE,
-  IMG_LINE + '\n      if(!m.ratio) im.addEventListener("load", ()=>{ if(im.naturalWidth) fig.style.aspectRatio = im.naturalWidth + "/" + im.naturalHeight; }, { once:true });');
+mainJs = mainJs.replace(
+  IMG_LINE,
+  IMG_LINE +
+    '\n      if(!m.ratio) im.addEventListener("load", ()=>{ if(im.naturalWidth) fig.style.aspectRatio = im.naturalWidth + "/" + im.naturalHeight; }, { once:true });',
+);
 
 out("src/js/main.js", mainJs.trim() + "\n");
 out("src/js/loops.js", loopsJs.trim() + "\n");
@@ -106,12 +123,17 @@ out("src/css/styles.css", css.replace(/\/\* Mode édition[\s\S]*?(?=\n\/\*|$)/, 
 // ---- 5. Gabarit HTML -------------------------------------------------------
 const head = headTop
   .replace(/<title>[^<]*<\/title>/, "<title>{{seo.title}}</title>")
-  .replace(/<meta name="description" content="[^"]*">/,
-    '<meta name="description" content="{{seo.description}}">\n<meta property="og:title" content="{{seo.title}}">\n<meta property="og:description" content="{{seo.description}}">\n<meta property="og:type" content="website">')
+  .replace(
+    /<meta name="description" content="[^"]*">/,
+    '<meta name="description" content="{{seo.description}}">\n<meta property="og:title" content="{{seo.title}}">\n<meta property="og:description" content="{{seo.description}}">\n<meta property="og:type" content="website">',
+  )
   .replace(/href="(favicon\.ico|favicon\.svg|apple-touch-icon\.png)\?v=2"/g, 'href="/$1?v=2"')
   .replace(/<meta name="claude:viewport-fit-sides"[^>]*>\n/, "");
-const tpl = head +
-  '<link rel="stylesheet" href="/css/styles.css?v={{v}}">\n</head>\n<body>\n' + markup + "\n\n" +
+const tpl =
+  head +
+  '<link rel="stylesheet" href="/css/styles.css?v={{v}}">\n</head>\n<body>\n' +
+  markup +
+  "\n\n" +
   '<script src="/content.js?v={{v}}"></script>\n<script src="/js/loops.js?v={{v}}"></script>\n<script src="/js/main.js?v={{v}}"></script>\n</body>\n</html>\n';
 out("src/index.html", tpl);
 console.log("Migration terminée.");

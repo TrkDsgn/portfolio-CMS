@@ -54,7 +54,10 @@ addEventListener("resize", () => {
   camera.shift = panelShift(app.view);
 });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readColors);
-new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+new MutationObserver(readColors).observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["data-theme"],
+});
 reducedMotion.addEventListener("change", () => (camera.dirty = true));
 
 initInput();

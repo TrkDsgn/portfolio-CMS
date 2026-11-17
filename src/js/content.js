@@ -9,3 +9,6 @@ export const SITE = content.site;
 export const PROJECTS = content.projects;
 /** Images de public/images : nom de fichier sans extension → URL. */
 export const ASSETS = content.assets;
+/** Images responsives (générées au build) : URL d'origine → { w, h, srcset: [[largeur, URL], …] }.
+    Vide en local (npm run dev) : les originaux sont alors utilisés. */
+export const IMAGES = content.images || {};

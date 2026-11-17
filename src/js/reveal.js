@@ -8,10 +8,26 @@ export const EASE_RISE = "cubic-bezier(.22,1,.36,1)";
 
 /** Éléments de texte animés. */
 const TEXT_SELECTOR = [
-  ".t-display", "h1", "h2", ".t-body", ".intro-hook", ".t-label", ".t-micro",
-  ".steps b", ".steps span", ".kpi .v", ".kpi .k", ".rules li",
-  ".f-nav a", ".f-tag", ".f-logo .name", ".f-right .row1 a", ".f-right .btn", ".m-nav a",
-  ".c-links dt", ".c-links dd",
+  ".t-display",
+  "h1",
+  "h2",
+  ".t-body",
+  ".intro-hook",
+  ".t-label",
+  ".t-micro",
+  ".steps b",
+  ".steps span",
+  ".kpi .v",
+  ".kpi .k",
+  ".rules li",
+  ".f-nav a",
+  ".f-tag",
+  ".f-logo .name",
+  ".f-right .row1 a",
+  ".f-right .btn",
+  ".m-nav a",
+  ".c-links dt",
+  ".c-links dd",
 ].join(", ");
 const BIG_SELECTOR = ".t-display, h1, h2, .kpi .v, .f-logo .name";
 

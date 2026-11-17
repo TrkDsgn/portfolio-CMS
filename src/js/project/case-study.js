@@ -34,9 +34,25 @@ function nextLink(N) {
 }
 
 /* Projet sans médias : galerie provisoire de visuels générés */
-const PLACEHOLDER_LAYOUT = [["g4", 2], ["g1", 0], ["g1", 1], ["g2", 5], ["g2", 4], ["g1", 3], ["g1", 0], ["g4", 2]];
-const PLACEHOLDER_CAPTIONS = { desktop: "Écran desktop", phone: "Écran mobile", swatch: "Palette", type: "Typographie",
-  flow: "Parcours", chart: "Données", icons: "Iconographie" };
+const PLACEHOLDER_LAYOUT = [
+  ["g4", 2],
+  ["g1", 0],
+  ["g1", 1],
+  ["g2", 5],
+  ["g2", 4],
+  ["g1", 3],
+  ["g1", 0],
+  ["g4", 2],
+];
+const PLACEHOLDER_CAPTIONS = {
+  desktop: "Écran desktop",
+  phone: "Écran mobile",
+  swatch: "Palette",
+  type: "Typographie",
+  flow: "Parcours",
+  chart: "Données",
+  icons: "Iconographie",
+};
 
 function renderPlaceholders(P) {
   const gallery = $("#gallery");
@@ -87,7 +103,9 @@ function arrangeFlow() {
 
   // répartit les sections de texte entre les rangées
   const sequence = [head];
-  const slots = sections.map((s, k) => (k === 0 ? 0 : Math.min(rows.length - 1, Math.round((k * (rows.length - 1)) / sections.length))));
+  const slots = sections.map((s, k) =>
+    k === 0 ? 0 : Math.min(rows.length - 1, Math.round((k * (rows.length - 1)) / sections.length)),
+  );
   rows.forEach((row, i) => {
     sequence.push(...row);
     sections.forEach((s, k) => {

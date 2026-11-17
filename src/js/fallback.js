@@ -15,7 +15,10 @@ export function showFallback() {
     canvas.width = 1024;
     canvas.height = 512;
     link.appendChild(canvas);
-    link.insertAdjacentHTML("beforeend", `<span class="t-micro">${esc(P.title)} — ${esc(P.category)} — ${esc(P.year)}</span>`);
+    link.insertAdjacentHTML(
+      "beforeend",
+      `<span class="t-micro">${esc(P.title)} — ${esc(P.category)} — ${esc(P.year)}</span>`,
+    );
     grid.appendChild(link);
     drawProjectCover(canvas.getContext("2d"), P, 0, 0, 1024, 512);
   });

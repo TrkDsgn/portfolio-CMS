@@ -6,7 +6,9 @@ const ICON_EXTERNAL = `<svg viewBox="0 0 10 10" fill="none" stroke="currentColor
 export const ICON_COPY = `<svg viewBox="0 -960 960 960" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`;
 
 const socialLinks = () =>
-  SITE.links.map(l => `<a class="link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}${ICON_EXTERNAL}</a>`).join("");
+  SITE.links
+    .map(l => `<a class="link" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}${ICON_EXTERNAL}</a>`)
+    .join("");
 
 /** Groupes « Compétences » puis « Parcours » du panneau À propos (--i : rang d'apparition). */
 function aboutGroups() {
@@ -17,7 +19,10 @@ function aboutGroups() {
     html += `<div class="group rv" style="--i:${rank++}"><span class="t-label accent">${esc(group.label)}</span><ul class="rules t-list">${items}</ul></div>`;
   });
   const path = SITE.about.path
-    .map((p, k) => `<li style="--i:${k}"><span class="yr t-micro">${esc(p.year)}</span><span><span>${esc(p.role)}</span> <span class="muted">— <span>${esc(p.org)}</span></span></span></li>`)
+    .map(
+      (p, k) =>
+        `<li style="--i:${k}"><span class="yr t-micro">${esc(p.year)}</span><span><span>${esc(p.role)}</span> <span class="muted">— <span>${esc(p.org)}</span></span></span></li>`,
+    )
     .join("");
   html += `<div class="group rv" style="--i:${rank++}"><span class="t-label accent">Parcours</span><ul class="rules t-list">${path}</ul></div>`;
   return html;
@@ -53,7 +58,8 @@ export function fillPage() {
 
   // Projets : liste accessible (lecteurs d'écran, clavier) et menu de la barre projet
   $("#projets-liste").innerHTML = PROJECTS.map(
-    p => `<li><a href="#projet-${p.slug}" data-focus="${p.slug}">${esc(p.title)} — ${esc(p.category)}, ${esc(p.year)}</a></li>`,
+    p =>
+      `<li><a href="#projet-${p.slug}" data-focus="${p.slug}">${esc(p.title)} — ${esc(p.category)}, ${esc(p.year)}</a></li>`,
   ).join("");
   $("#p-select").innerHTML = PROJECTS.map(p => `<option value="${p.slug}">${esc(p.title)}</option>`).join("");
 }

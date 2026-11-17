@@ -50,7 +50,13 @@ function onSubmit(e) {
   // ouvre la messagerie
   const subject = "Projet : " + $("#f-type").value + " - " + $("#f-name").value;
   const mailto = document.createElement("a");
-  mailto.href = "mailto:" + SITE.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(composedMessage());
+  mailto.href =
+    "mailto:" +
+    SITE.email +
+    "?subject=" +
+    encodeURIComponent(subject) +
+    "&body=" +
+    encodeURIComponent(composedMessage());
   mailto.target = "_top";
   document.body.appendChild(mailto);
   mailto.click();

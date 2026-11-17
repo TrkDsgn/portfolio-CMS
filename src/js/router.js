@@ -125,7 +125,8 @@ export async function go() {
     tween(camera, "shift", panelShift(view), 420, ease.out);
     if (view === "about" && previous !== "about") revealText(panelAbout, 180);
     else if (view === "contact" && previous !== "contact") revealText(panelContact, 180);
-    document.title = view === "about" ? "À propos — Tarik Bouabid" : view === "contact" ? "Contact — Tarik Bouabid" : HOME_TITLE;
+    document.title =
+      view === "about" ? "À propos — Tarik Bouabid" : view === "contact" ? "Contact — Tarik Bouabid" : HOME_TITLE;
     if (view === "about") panelAbout.focus({ preventScroll: true });
     else if (view === "contact") panelContact.focus({ preventScroll: true });
     else if (previous !== "home") dom.canvas.focus({ preventScroll: true });
