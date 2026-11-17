@@ -69,8 +69,9 @@ textarea {
   left: 2rem;
   top: 2rem;
   z-index: 100;
-  background: var(--bg-2);
+  background: var(--bg);
   padding: 1rem 1.5rem;
+  border: var(--hair) solid var(--line);
   transform: translateY(-300%);
 }
 
@@ -101,19 +102,23 @@ textarea {
   line-height: 1.5;
 }
 
+/* Libellés et petits textes : monospace en capitales */
 .t-label {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--fs-label);
   line-height: 1.4;
-  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .t-micro {
-  font-family: var(--font-sans);
-  font-weight: 400;
+  font-family: var(--font-mono);
+  font-weight: 500;
   font-size: var(--fs-micro);
   line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .accent {

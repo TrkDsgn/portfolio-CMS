@@ -138,6 +138,7 @@ collections:
             widget: object
             summary: "📝 {{fields.h}}"
             fields:
+              - { name: k, label: Surtitre, required: false, hint: "Petit texte vert à gauche du titre" }
               - { name: h, label: Titre }
               - { name: text, label: Texte, widget: text }
               - name: list
@@ -168,8 +169,7 @@ collections:
               - { name: title, label: "Titre de la page (onglet / Google)" }
               - { name: description, label: Description, widget: text }
           - { name: name, label: Nom }
-          - { name: role, label: "Métier (affiché après le nom, ex. product designer)" }
-          - { name: hook, label: "Accroche (sous le titre de l'accueil, une phrase)", widget: text }
+          - { name: hook, label: "Accroche (description du site si le champ SEO est vide)", widget: text }
           - { name: taglineLeft, label: "Mots-clés de l'en-tête", widget: list }
           - { name: cta, label: "Bouton principal" }
           - { name: ctaShort, label: "Bouton court (mobile)" }

@@ -1,6 +1,4 @@
 /* Point d'entrée du portfolio.
-   Pas d'écran de chargement : le titre et l'en-tête sont lisibles tout de suite ;
-   seul le plan de travail apparaît en fondu, une fois ses vignettes prêtes.
 
    Organisation :
      content.js          contenu du CMS          state.js     état partagé (caméra, vue, éléments)
@@ -33,10 +31,32 @@ function fontsReady() {
   );
 }
 
+/* Écran de chargement : l'anneau progresse (polices, puis vignettes), reste affiché au moins 1,7 s,
+   puis s'efface ; le plan de travail et l'en-tête apparaissent en fondu. */
+const LOADER_MIN_MS = 1700;
+const loadStart = performance.now();
+function setLoaderProgress(value) {
+  const ring = document.getElementById("ld-fg");
+  if (ring) ring.style.strokeDashoffset = String(100 - 100 * value);
+}
+function hideLoader() {
+  const loader = $("#loader");
+  loader.classList.add("done");
+  setTimeout(
+    () => {
+      loader.classList.add("out");
+      document.body.classList.remove("loading");
+      camera.dirty = true;
+      revealText(dom.frame, 200);
+    },
+    reducedMotion.matches ? 0 : 650,
+  );
+  setTimeout(() => loader.remove(), 2000);
+}
+
 document.body.classList.add("loading");
+setTimeout(() => setLoaderProgress(0.25), 200);
 fillPage();
-revealText(dom.frame, 0);
-revealText($("#intro"), 120);
 
 let webglOk = false;
 try {
@@ -68,12 +88,15 @@ startLoopClock();
 fontsReady()
   .then(() => {
     resize();
+    setLoaderProgress(0.55);
     return webglOk ? buildAtlas() : showFallback();
   })
   .then(() => {
-    document.body.classList.remove("loading");
-    camera.dirty = true;
-  });
+    setLoaderProgress(1);
+    const remaining = Math.max(0, LOADER_MIN_MS - (performance.now() - loadStart));
+    return new Promise(resolve => setTimeout(resolve, remaining));
+  })
+  .then(hideLoader);
 
 if (webglOk) startAnimation();
 else updateDom();

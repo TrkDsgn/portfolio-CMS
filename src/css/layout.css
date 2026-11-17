@@ -1,5 +1,5 @@
-/* Structure de l'accueil : plan de travail (canvas), en-tête, bandeau défilant,
-   étiquette de survol, bloc de présentation, bouton mobile, repli sans WebGL. */
+/* Structure de l'accueil : plan de travail (canvas), en-tête à filets, coordonnées, bandeau défilant,
+   étiquette de survol, bouton mobile, repli sans WebGL. */
 
 /* Plan de travail (canvas WebGL plein écran) */
 #gl {
@@ -21,7 +21,7 @@
   cursor: pointer;
 }
 
-/* En-tête : grille de 5 colonnes, 2 rangées */
+/* En-tête : grille de 5 colonnes, 2 rangées, cases séparées par des filets */
 .frame {
   position: fixed;
   inset: 0 0 auto;
@@ -29,23 +29,30 @@
   height: var(--head);
   z-index: 30;
   display: grid;
-  background: var(--bg-2);
+  background: var(--bg);
   grid-template-columns: 8fr 9fr 10fr 9fr 8fr;
   grid-template-rows: 7rem 1fr;
+  border-bottom: var(--hair) solid var(--line);
   transition:
     transform 0.5s var(--ease-out),
     opacity 0.4s var(--ease-dec);
 }
 
 .frame > * {
+  border-right: var(--hair) solid var(--line);
   min-width: 0;
   display: flex;
   align-items: center;
 }
 
+.frame > *:last-child {
+  border-right: 0;
+}
+
 .f-nav {
   grid-column: 1 / span 2;
   grid-row: 1;
+  border-bottom: var(--hair) solid var(--line);
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch !important;
@@ -57,8 +64,13 @@
   justify-content: center;
   min-width: 0;
   padding-inline: 0.6rem;
+  border-right: var(--hair) solid var(--line);
   overflow: hidden;
-  font-size: var(--fs-label);
+  font-size: min(var(--fs-label), 12px);
+}
+
+.f-nav a:last-child {
+  border-right: 0;
 }
 
 .f-tag {
@@ -115,6 +127,7 @@
 .f-right .row1 {
   height: 7rem;
   display: flex;
+  border-bottom: var(--hair) solid var(--line);
   text-transform: none;
   font-family: var(--font-sans);
   font-size: var(--fs-list);
@@ -127,12 +140,17 @@
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
+  border-right: var(--hair) solid var(--line);
 }
 
 .f-right .row1 a svg {
   width: 1.1rem;
   height: 1.1rem;
   flex: none;
+}
+
+.f-right .row1 a:last-child {
+  border-right: 0;
 }
 
 .f-right .row2 {
@@ -162,11 +180,6 @@
   transform: translateY(-102%);
   opacity: 0;
   pointer-events: none;
-  visibility: hidden;
-  transition:
-    transform 0.5s var(--ease-out),
-    opacity 0.4s var(--ease-dec),
-    visibility 0s linear 0.5s;
 }
 
 /* Éléments réservés au mobile (m-only) ou au desktop (d-only).
@@ -175,24 +188,40 @@
   display: none !important;
 }
 
-/* Bandeau défilant */
+/* Coordonnées de la caméra, sous l'en-tête à gauche et à droite */
+.readout {
+  position: fixed;
+  top: calc(var(--head) + var(--s-20) + env(safe-area-inset-top, 0px));
+  z-index: 6;
+  color: var(--ink-subtle);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.readout.l {
+  left: max(var(--s-25), env(safe-area-inset-left, 0px));
+}
+
+.readout.r {
+  right: max(var(--s-25), env(safe-area-inset-right, 0px));
+}
+
+/* Bandeau défilant, centré en bas */
 .ticker {
   position: fixed;
   z-index: 20;
-  right: max(var(--s-25), env(safe-area-inset-right, 0px));
+  left: 50%;
   bottom: calc(var(--s-25) + env(safe-area-inset-bottom, 0px));
-  width: min(50rem, calc(44% - 2 * var(--s-25)));
+  transform: translateX(-50%);
+  width: min(50rem, calc(100% - 4rem));
   overflow: hidden;
-  background: var(--bg-2);
+  background: var(--surface-float);
+  border: var(--hair) solid var(--line);
   border-radius: var(--r-control);
-  height: 4.4rem;
+  height: 4rem;
   display: flex;
   align-items: center;
   transition: opacity 0.3s var(--ease-dec);
-}
-
-.is-project .ticker {
-  visibility: hidden;
 }
 
 .ticker-track {
@@ -225,7 +254,8 @@
   pointer-events: none;
   padding: 0.8rem 1.2rem;
   border-radius: var(--r-control);
-  background: var(--bg-2);
+  background: var(--surface-float);
+  border: var(--hair) solid var(--line);
   opacity: 0;
   transition: opacity 0.2s var(--ease-dec);
   white-space: nowrap;
@@ -233,45 +263,6 @@
 
 .hovertag.on {
   opacity: 1;
-}
-
-/* Présentation : qui, quoi, dès le premier écran */
-.intro {
-  position: fixed;
-  z-index: 7;
-  left: max(var(--s-25), env(safe-area-inset-left, 0px));
-  bottom: calc(var(--s-25) + env(safe-area-inset-bottom, 0px));
-  width: calc(16 / 44 * 100% - 2 * var(--s-25));
-  padding: var(--s-30);
-  background: var(--bg-2);
-  border-radius: var(--r-tile);
-}
-
-.intro-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: max(5.6rem, 34px);
-  line-height: 1;
-  letter-spacing: -0.025em;
-  margin: 0;
-  text-wrap: balance;
-}
-
-.intro-role {
-  display: block;
-}
-
-/* Masquée sous les panneaux et les études de cas (un seul titre principal visible à la fois) */
-.is-project .intro,
-body:has(.panel.open) .intro {
-  visibility: hidden;
-}
-
-.intro-hook {
-  margin: var(--s-20) 0 0;
-  font-size: max(2rem, 17px);
-  line-height: 1.45;
-  max-width: 40ch;
 }
 
 /* Bouton « Contact » flottant (mobile uniquement) */
@@ -329,10 +320,6 @@ body:has(.panel.open) .intro {
   .f-logo .name {
     font-size: 2.4rem;
   }
-
-  .intro {
-    width: calc(50% - 2 * var(--s-25));
-  }
 }
 
 /* ------------------------------------------------------------------ Mobile */
@@ -350,6 +337,10 @@ body:has(.panel.open) .intro {
     grid-template-rows: 1fr;
     padding-left: max(var(--s-20), env(safe-area-inset-left, 0px));
     padding-right: max(var(--s-20), env(safe-area-inset-right, 0px));
+  }
+
+  .frame > * {
+    border-right: 0;
   }
 
   .f-logo {
@@ -375,6 +366,10 @@ body:has(.panel.open) .intro {
     gap: var(--s-20);
   }
 
+  .readout {
+    display: none;
+  }
+
   .ticker {
     top: calc(var(--head) + env(safe-area-inset-top, 0px));
     bottom: auto;
@@ -384,21 +379,5 @@ body:has(.panel.open) .intro {
     border-radius: 0;
     border-width: 0 0 var(--hair);
     height: 3.4rem;
-  }
-
-  .intro {
-    left: max(var(--s-20), env(safe-area-inset-left, 0px));
-    right: max(var(--s-20), env(safe-area-inset-right, 0px));
-    width: auto;
-    bottom: calc(var(--s-65) + 2 * var(--s-20) + env(safe-area-inset-bottom, 0px));
-    padding: var(--s-20);
-  }
-
-  .intro-title {
-    font-size: 32px;
-  }
-
-  .intro-hook {
-    font-size: 16px;
   }
 }

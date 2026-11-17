@@ -9,27 +9,29 @@
   /* Couleurs */
   --bg: #181616;
   --bg-deep: #181616;
-  --bg-2: #211e1d; /* surface : un pas de ton au-dessus du fond, à la place des filets */
   --ink: #fffddb;
   --ink-muted: rgb(255 253 219 / 0.55);
   --ink-subtle: #7d7a6c;
-  --ink-wash: rgb(255 253 219 / 0.05); /* fond très léger (encart « Message prêt ») */
   --accent: #3fcb89;
-  --accent-hover: #5fd9a0;
   --accent-text: #3fcb89;
   --on-accent: #121212;
-  --line: #33302e; /* grille du plan de travail (canvas) et bordures de champs */
+  --line: #33302e; /* filets discrets */
+  --glass: rgb(18 18 18 / 0.6);
+  --surface-float: rgb(24 22 22 / 0.92); /* bandeau, étiquette de survol */
+  --surface-pill: rgb(24 22 22 / 0.94); /* barre du mode projet */
   --caption-bg: rgb(18 18 18 / 0.78);
   --hover-wash: rgb(255 255 255 / 0.06);
+  --shadow-float: 0.3rem 0.5rem 1.2rem hsl(0 4% 9% / 0.3);
 
   /* Typographie */
   --font-display: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
   --font-sans: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --fs-display: 5rem;
-  --fs-body: max(1.8rem, 16px);
-  --fs-list: var(--fs-body);
-  --fs-label: max(1.6rem, 14px);
-  --fs-micro: var(--fs-label);
+  --fs-body: 1.8rem;
+  --fs-list: 1.5rem;
+  --fs-label: max(1.4rem, 11px);
+  --fs-micro: max(1.2rem, 10px);
   --fs-cta: 2.4rem;
 
   /* Espacements */
@@ -49,7 +51,7 @@
   /* Mise en page */
   --head: 18rem; /* hauteur de l'en-tête */
   --cols: 44; /* la page est pensée sur 44 colonnes */
-  --hair: 1px;
+  --hair: 1px; /* épaisseur des filets */
 
   /* Courbes d'animation */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -79,10 +81,10 @@
     --rem-max: 11px;
     --head: 5.6rem;
     --fs-display: 3.4rem;
-    --fs-body: 16px;
-    --fs-list: 16px;
-    --fs-label: 14px;
-    --fs-micro: 14px;
+    --fs-body: 1.6rem;
+    --fs-list: 1.5rem;
+    --fs-label: max(1.2rem, 11px);
+    --fs-micro: max(1.1rem, 10px);
     --fs-cta: 2.4rem;
   }
 }

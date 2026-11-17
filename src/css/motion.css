@@ -1,14 +1,5 @@
-/* Mouvement : apparition du plan de travail, découpe des textes en mots, réglage
-   « réduire les animations » du système. */
-
-/* Le plan de travail apparaît en fondu quand ses vignettes sont prêtes ; le texte est là tout de suite */
-#gl {
-  transition: opacity 1.2s var(--ease-dec);
-}
-
-body.loading #gl {
-  opacity: 0;
-}
+/* Mouvement : écran de chargement, apparition de la page, découpe des textes en mots,
+   réglage « réduire les animations » du système. */
 
 /* Apparition des textes : chaque mot (.wi) monte depuis un masque (.w). Voir reveal.js */
 .w {
@@ -23,7 +14,133 @@ body.loading #gl {
   display: inline-block;
 }
 
-/* « Réduire les animations » : tout est affiché immédiatement, rien ne bouge */
+/* Écran de chargement : page noire, logo et anneau de progression, puis le plan de travail apparaît */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: grid;
+  place-items: center;
+  transition:
+    opacity 0.8s var(--ease-dec),
+    visibility 0s linear 0.8s;
+}
+
+.loader::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 80vmin;
+  height: 80vmin;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 253 219 / 0.045), transparent 70%);
+  animation: ld-breathe 2.4s var(--ease-std) infinite alternate;
+}
+
+@keyframes ld-breathe {
+  to {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 0.6;
+  }
+}
+
+.ld-in {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4rem;
+  transition:
+    transform 0.9s var(--ease-out),
+    opacity 0.6s var(--ease-dec);
+}
+
+.ld-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  color: var(--ink);
+  opacity: 0;
+  animation: ld-on 1s var(--ease-dec) 0.15s forwards;
+}
+
+.ld-mark .logo {
+  height: 6.4rem;
+}
+
+.ld-mark .name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 3.2rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+@keyframes ld-on {
+  to {
+    opacity: 0.55;
+  }
+}
+
+.ld-ring {
+  width: 3.2rem;
+  height: 3.2rem;
+  opacity: 0;
+  animation: ld-on 1s var(--ease-dec) 0.5s forwards;
+}
+
+.ld-ring circle {
+  fill: none;
+  stroke-width: 2;
+}
+
+.ld-ring .bg {
+  stroke: var(--line);
+}
+
+.ld-ring .fg {
+  stroke: var(--ink);
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.5s var(--ease-dec);
+}
+
+.loader.done .ld-in {
+  transform: translateY(-4rem);
+  opacity: 0;
+}
+
+.loader.out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Pendant le chargement, la page est masquée ; elle apparaît en fondu */
+body.loading #gl,
+body.loading .frame,
+body.loading .ticker,
+body.loading .readout {
+  opacity: 0;
+}
+
+#gl,
+.ticker,
+.readout {
+  transition: opacity 1.2s var(--ease-dec);
+}
+
+body.loading .frame {
+  transform: translateY(-1.5rem);
+}
+
+/* « Réduire les animations » : rien ne bouge */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

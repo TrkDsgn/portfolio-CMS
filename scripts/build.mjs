@@ -115,7 +115,6 @@ export function renderIndex(content, version, files = { css: "/css/main.css", js
   return fs
     .readFileSync(r("src/index.html"), "utf8")
     .replaceAll("{{site.name}}", escHtml(site.name))
-    .replaceAll("{{site.role}}", escHtml(site.role || "product designer"))
     .replaceAll("{{site.hook}}", escHtml(site.hook))
     .replaceAll("{{seo.title}}", escHtml(seo.title || content.site.name))
     .replaceAll("{{seo.description}}", escHtml(seo.description || content.site.hook))

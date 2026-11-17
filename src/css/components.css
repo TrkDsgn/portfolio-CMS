@@ -39,13 +39,13 @@
   max-width: 100%;
   transition:
     transform 0.2s var(--ease-dec),
-    background-color 0.2s var(--ease-dec);
+    box-shadow 0.2s var(--ease-dec);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn:hover {
     transform: translateY(-2px);
-    background: var(--accent-hover);
+    box-shadow: var(--shadow-float);
   }
 }
 
@@ -69,7 +69,7 @@
   mask: var(--logo) center / contain no-repeat;
 }
 
-/* Listes simples (compétences, parcours, rôle) */
+/* Listes à filets (compétences, parcours, rôle) : les filets se tracent à l'ouverture du panneau ou du projet */
 .rules {
   list-style: none;
   margin: 0;
@@ -78,11 +78,40 @@
 
 .rules li {
   position: relative;
-  padding-block: 0.5rem;
+  padding-block: 1rem;
   display: flex;
   gap: var(--s-20);
   align-items: baseline;
-  color: var(--ink);
+  color: var(--ink-muted);
+}
+
+.rules li::before,
+.rules li:last-child::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--hair);
+  background: var(--line);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.4s var(--ease-dec);
+  transition-delay: calc(var(--i, 0) * 40ms + 250ms);
+}
+
+.rules li::before {
+  top: 0;
+}
+
+.rules li:last-child::after {
+  bottom: 0;
+}
+
+.open .rules li::before,
+.open .rules li:last-child::after,
+.project.open .rules li::before,
+.project.open .rules li:last-child::after {
+  transform: scaleX(1);
 }
 
 .rules .yr {

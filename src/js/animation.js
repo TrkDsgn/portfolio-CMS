@@ -1,6 +1,6 @@
 /* Boucle d'animation du plan de travail : dérive automatique, inertie, molette en douceur,
    séparation des couleurs selon la vitesse. Le canvas n'est redessiné que si quelque chose a bougé. */
-import { reducedMotion, mobileQuery } from "./utils.js";
+import { $, reducedMotion, mobileQuery } from "./utils.js";
 import { camera, app, dom } from "./state.js";
 import { stepTweens, isTweening } from "./camera.js";
 import { render } from "./webgl/renderer.js";
@@ -9,8 +9,13 @@ import { render } from "./webgl/renderer.js";
 const DRIFT = 16;
 let lastNow = 0;
 
-/** Met à jour ce qui, dans le DOM, suit la caméra (le bandeau se décale avec les panneaux). */
+const readoutLeft = $("#ro-l");
+const readoutRight = $("#ro-r");
+
+/** Met à jour ce qui, dans le DOM, suit la caméra : coordonnées affichées, bandeau décalé avec les panneaux. */
 export function updateDom() {
+  readoutLeft.textContent = (camera.off[0] / 1000).toFixed(6);
+  readoutRight.textContent = (-camera.off[1] / 1000).toFixed(6);
   dom.ticker.style.marginLeft = mobileQuery.matches ? "" : camera.shift + "px";
 }
 

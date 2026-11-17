@@ -33,7 +33,6 @@ export const app = {
   view: "home", // "home" | "about" | "contact" | "project"
   pendingCluster: null, // cluster cliqué, pour que la caméra aille sur celui-là
   homeState: null, // position de la caméra avant d'ouvrir un projet
-  firstGo: true, // arrivée directe sur un lien : pas d'animation de caméra avant le contenu
   dragging: false,
   hoverId: -1, // projet survolé
 };

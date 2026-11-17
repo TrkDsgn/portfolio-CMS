@@ -16,10 +16,10 @@ src/
     tokens.css           variables : couleurs, tailles de texte, espacements
     base.css             socle, accessibilité, styles de texte
     components.css       liens, bouton, logo, listes, champs
-    layout.css           plan de travail, en-tête, bandeau, présentation
+    layout.css           plan de travail, en-tête, coordonnées, bandeau
     pages/panels.css     panneaux À propos et Contact
     pages/project.css    étude de cas et galerie
-    motion.css           apparitions, « réduire les animations »
+    motion.css           écran de chargement, apparitions, « réduire les animations »
   js/
     main.js              point d'entrée (démarrage)
     content.js           contenu du CMS          state.js       état partagé
@@ -65,7 +65,7 @@ Le build :
 | Je veux… | Fichier |
 |---|---|
 | changer une couleur, une taille de texte, un espacement | `src/css/tokens.css` |
-| retoucher l'en-tête, le bandeau, le bloc de présentation | `src/css/layout.css` |
+| retoucher l’en-tête, les coordonnées, le bandeau | `src/css/layout.css` |
 | retoucher l'étude de cas ou la galerie | `src/css/pages/project.css`, `src/js/project/` |
 | modifier une animation de projet | `src/js/loops/<projet>.js` |
 | ajouter une animation | la coder dans `src/js/loops/<projet>.js`, puis ajouter son nom dans `public/admin/config.yml` (le build vérifie) |

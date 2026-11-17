@@ -52,19 +52,21 @@ function drawLoop(loop, progress) {
   loop.def.draw(loop.ctx, loop.canvas.width, loop.canvas.height, progress, loopImages);
 }
 
-/** Bloc de texte de la galerie : titre, paragraphe, liste. */
+/** Bloc de texte de la galerie : surtitre, titre, paragraphe, liste numérotée (01, 02…). */
 function textBlock(item) {
   const block = document.createElement("div");
   block.className = "gtxt";
-  block.innerHTML = `<h2></h2><div>${item.text ? '<p class="t-body"></p>' : ""}${item.list ? "<dl></dl>" : ""}</div>`;
+  block.innerHTML = `<p class="t-micro gk"></p><div><h2></h2>${item.text ? '<p class="t-body"></p>' : ""}${item.list ? "<dl></dl>" : ""}</div>`;
+  block.querySelector(".gk").textContent = item.k || "";
   block.querySelector("h2").textContent = item.h || "";
   const paragraph = block.querySelector(".t-body");
   if (paragraph) paragraph.textContent = item.text;
-  (item.list || []).forEach(entry => {
+  (item.list || []).forEach((entry, j) => {
     const row = document.createElement("div");
-    row.innerHTML = '<dt><b></b></dt><dd class="t-body"></dd>';
+    row.innerHTML = '<dt class="t-micro"></dt><dd><b></b></dd><dd class="t-body"></dd>';
+    row.querySelector("dt").textContent = String(j + 1).padStart(2, "0");
     row.querySelector("b").textContent = entry.b;
-    row.querySelector("dd").textContent = entry.s;
+    row.querySelector("dd.t-body").textContent = entry.s;
     block.querySelector("dl").appendChild(row);
   });
   return block;

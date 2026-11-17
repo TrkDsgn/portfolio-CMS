@@ -5,14 +5,15 @@ import { dom } from "../state.js";
 import { drawTile, drawProjectCover } from "../webgl/tiles.js";
 import { renderMedia, stopLoops } from "./gallery.js";
 
-const section = (label, inner) => `<section class="p-sec"><h2 class="t-label accent">${label}</h2>${inner}</section>`;
+const section = (label, inner) =>
+  `<section class="p-sec"><span class="t-label accent">${label}</span>${inner}</section>`;
 
 function textColumn(P) {
   return `<article class="p-text">
       <header class="p-head">
+        <div class="eyebrow t-micro"><span class="accent">${esc(P.category)}</span><span class="muted">${esc(P.year)}</span></div>
         <h1 class="t-display">${esc(P.title)}</h1>
-        <p class="p-meta"><span>${esc(P.category)}</span>, <span>${esc(P.year)}</span></p>
-        <p class="t-body">${esc(P.summary)}</p>
+        <p class="t-body muted">${esc(P.summary)}</p>
       </header>
       ${section("Contexte", `<p class="t-body">${esc(P.context)}</p>`)}
       ${section("Rôle", `<ul class="rules t-list">${P.role.map((x, k) => `<li style="--i:${k}">${esc(x)}</li>`).join("")}</ul>`)}

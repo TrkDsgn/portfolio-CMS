@@ -12,7 +12,6 @@ const TEXT_SELECTOR = [
   "h1",
   "h2",
   ".t-body",
-  ".intro-hook",
   ".t-label",
   ".t-micro",
   ".steps b",

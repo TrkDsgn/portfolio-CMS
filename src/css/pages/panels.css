@@ -6,7 +6,8 @@
   left: 0;
   top: calc(var(--head) + env(safe-area-inset-top, 0px));
   bottom: 0;
-  background: var(--bg-2);
+  background: var(--bg);
+  border-right: var(--hair) solid var(--line);
   overflow-y: auto;
   overscroll-behavior: contain;
   transform: translateX(-101%);
@@ -26,20 +27,18 @@
 }
 
 /* Les blocs .rv apparaissent l'un après l'autre (--i = rang) à l'ouverture */
-@media (prefers-reduced-motion: no-preference) {
-  .panel .rv {
-    opacity: 0;
-    transform: translateY(1rem);
-    transition:
-      opacity 0.5s var(--ease-dec),
-      transform 0.5s var(--ease-dec);
-  }
+.panel .rv {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.5s var(--ease-dec),
+    transform 0.5s var(--ease-dec);
+}
 
-  .panel.open .rv {
-    opacity: 1;
-    transform: none;
-    transition-delay: calc(var(--i, 0) * 60ms + 150ms);
-  }
+.panel.open .rv {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 60ms + 150ms);
 }
 
 .panel p + p {
@@ -123,7 +122,7 @@
 
 /* Encart affiché après l'envoi du formulaire */
 .status {
-  background: var(--ink-wash);
+  border: var(--hair) solid var(--line);
   border-radius: var(--r-control);
   padding: var(--s-20) var(--s-25);
   width: 100%;

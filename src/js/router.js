@@ -62,8 +62,8 @@ async function openProject(slug, previous) {
     app.view = "project";
     dom.frame.classList.add("is-hidden");
     dom.ticker.style.opacity = "0";
-    // la caméra aplatit la grille et zoome sur le projet (sauf à l'arrivée directe sur le lien)
-    if (cluster && !app.firstGo) {
+    // la caméra aplatit la grille et zoome sur le projet
+    if (cluster) {
       camera.vel = [0, 0];
       tween(camera, "shift", 0, 400, ease.out);
       tween(camera, "curve", 0, 620, ease.inOut);
@@ -132,7 +132,6 @@ export async function go() {
     else if (previous !== "home") dom.canvas.focus({ preventScroll: true });
   }
   setNav(app.view);
-  app.firstGo = false;
 }
 
 /** Branche la navigation. */
