@@ -103,13 +103,14 @@ function toRGB(value) {
   return [m[0] / 255, m[1] / 255, m[2] / 255];
 }
 
-/** Lit les couleurs de la grille dans les variables CSS (--bg, --line, --bg-deep). */
+/** Lit les couleurs de la grille dans les variables CSS (--bg, --line, --bg-deep, --accent). */
 export function readColors() {
   const cs = getComputedStyle(document.documentElement);
   colors = {
     bg: toRGB(cs.getPropertyValue("--bg")),
     line: toRGB(cs.getPropertyValue("--line")),
     deep: toRGB(cs.getPropertyValue("--bg-deep")),
+    tint: toRGB(cs.getPropertyValue("--accent")),
   };
   camera.dirty = true;
 }
@@ -146,7 +147,8 @@ export function render() {
   gl.uniform2f(uni.uHover, camera.hover[0], camera.hover[1]);
   gl.uniform1f(uni.uHoverAmt, camera.hoverAmt);
   gl.uniform3fv(uni.uBg, colors.bg);
-  gl.uniform3fv(uni.uLine, colors.line);
+  const t = camera.lineTint;
+  gl.uniform3fv(uni.uLine, t > 0 ? colors.line.map((v, i) => v + (colors.tint[i] - v) * t) : colors.line);
   gl.uniform3fv(uni.uDeep, colors.deep);
   gl.uniform1f(uni.uCols, ATLAS_COLS);
   gl.uniform1f(uni.uAb, reducedMotion.matches ? 0 : camera.aberration);

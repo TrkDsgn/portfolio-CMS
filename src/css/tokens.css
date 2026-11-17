@@ -23,6 +23,12 @@
   --hover-wash: rgb(255 255 255 / 0.06);
   --shadow-float: 0.3rem 0.5rem 1.2rem hsl(0 4% 9% / 0.3);
 
+  /* Dégradé du chargement (globe et nom), parcouru en boucle */
+  --spectrum-1: #3fcb89; /* vert (accent) */
+  --spectrum-2: #4f8cff; /* bleu */
+  --spectrum-3: #9b6bff; /* violet */
+  --spectrum-4: #fffddb; /* crème (encre) */
+
   /* Typographie */
   --font-display: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
   --font-sans: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;

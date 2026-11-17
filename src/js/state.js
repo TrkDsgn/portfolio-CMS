@@ -17,6 +17,7 @@ export const camera = {
   curve: 0.32, // courbure de la grille (0 = plate)
   shift: 0, // décalage horizontal quand un panneau est ouvert
   aberration: 0, // séparation des couleurs pendant un mouvement rapide
+  lineTint: 0, // teinte des lignes de la grille (1 = couleur d'accent), à la fin du chargement
   dir: [0, 1], // direction du mouvement
   hover: [1e6, 1e6], // cluster survolé
   hoverAmt: 0,

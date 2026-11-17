@@ -7,8 +7,8 @@
      input.js            souris, doigt, clavier  router.js    navigation (#about, #projet-…)
      project/            étude de cas, galerie   reveal.js    apparition des textes
      loops/              animations des projets  contact.js   formulaire
-     fallback.js         repli sans WebGL */
-import { $, reducedMotion } from "./utils.js";
+     loader.js           écran de chargement + globe  fallback.js  repli sans WebGL */
+import { reducedMotion } from "./utils.js";
 import { camera, app, dom } from "./state.js";
 import { cellSize } from "./camera.js";
 import { fillPage } from "./page.js";
@@ -16,7 +16,7 @@ import { initGL, buildAtlas, readColors, resize } from "./webgl/renderer.js";
 import { startAnimation, updateDom } from "./animation.js";
 import { initInput } from "./input.js";
 import { initRouter, go, panelShift } from "./router.js";
-import { revealText } from "./reveal.js";
+import { startLoader, setLoaderProgress, finishLoader } from "./loader.js";
 import { startLoopClock } from "./project/gallery.js";
 import { initContact } from "./contact.js";
 import { showFallback } from "./fallback.js";
@@ -31,31 +31,7 @@ function fontsReady() {
   );
 }
 
-/* Écran de chargement : l'anneau progresse (polices, puis vignettes), reste affiché au moins 1,7 s,
-   puis s'efface ; le plan de travail et l'en-tête apparaissent en fondu. */
-const LOADER_MIN_MS = 1700;
-const loadStart = performance.now();
-function setLoaderProgress(value) {
-  const ring = document.getElementById("ld-fg");
-  if (ring) ring.style.strokeDashoffset = String(100 - 100 * value);
-}
-function hideLoader() {
-  const loader = $("#loader");
-  loader.classList.add("done");
-  setTimeout(
-    () => {
-      loader.classList.add("out");
-      document.body.classList.remove("loading");
-      camera.dirty = true;
-      revealText(dom.frame, 200);
-    },
-    reducedMotion.matches ? 0 : 650,
-  );
-  setTimeout(() => loader.remove(), 2000);
-}
-
-document.body.classList.add("loading");
-setTimeout(() => setLoaderProgress(0.25), 200);
+startLoader();
 fillPage();
 
 let webglOk = false;
@@ -91,12 +67,7 @@ fontsReady()
     setLoaderProgress(0.55);
     return webglOk ? buildAtlas() : showFallback();
   })
-  .then(() => {
-    setLoaderProgress(1);
-    const remaining = Math.max(0, LOADER_MIN_MS - (performance.now() - loadStart));
-    return new Promise(resolve => setTimeout(resolve, remaining));
-  })
-  .then(hideLoader);
+  .then(() => finishLoader(dom.frame));
 
 if (webglOk) startAnimation();
 else updateDom();

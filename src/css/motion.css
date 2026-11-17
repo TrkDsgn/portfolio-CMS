@@ -65,7 +65,13 @@
   gap: 1.4rem;
   color: var(--ink);
   opacity: 0;
-  animation: ld-on 1s var(--ease-dec) 0.15s forwards;
+  animation: ld-mark-on 1s var(--ease-dec) 0.15s forwards;
+}
+
+@keyframes ld-mark-on {
+  to {
+    opacity: 0.9;
+  }
 }
 
 .ld-mark .logo {
@@ -78,6 +84,36 @@
   font-size: 3.2rem;
   letter-spacing: -0.02em;
   line-height: 1;
+  /* le dégradé du globe défile dans les lettres */
+  background: linear-gradient(
+      90deg,
+      var(--spectrum-1),
+      var(--spectrum-2),
+      var(--spectrum-3),
+      var(--spectrum-4),
+      var(--spectrum-1)
+    )
+    0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ld-spectrum 3.6s linear infinite;
+}
+
+@keyframes ld-spectrum {
+  to {
+    background-position: 150% 0;
+  }
+}
+
+/* Globe en fil de fer sous l'anneau (dessiné par loader.js) */
+.ld-globe {
+  display: block;
+  width: 16rem;
+  height: 16rem;
+  transition:
+    transform 0.9s cubic-bezier(0.7, 0, 0.84, 0),
+    opacity 0.7s var(--ease-dec) 0.2s;
 }
 
 @keyframes ld-on {
@@ -114,6 +150,12 @@
 
 .loader.done .ld-in {
   transform: translateY(-4rem);
+  opacity: 0;
+}
+
+/* Fin du chargement : le globe grossit vers le spectateur et s'efface */
+.loader.done .ld-globe {
+  transform: scale(5);
   opacity: 0;
 }
 
