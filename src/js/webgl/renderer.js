@@ -4,7 +4,7 @@ import { PROJECTS } from "../content.js";
 import { camera, dom, MAX_PROJECTS, gridCount } from "../state.js";
 import { cellSize, viewCenter, projection, curveNow } from "../camera.js";
 import { VERTEX_SHADER, FRAGMENT_SHADER } from "./shaders.js";
-import { drawProjectCover } from "./tiles.js";
+import { drawCluster } from "./tiles.js";
 import { inkCanvas, updateInk, inkActive, resizeInk, readInkColors } from "./ink.js";
 
 const gl = dom.canvas.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false });
@@ -41,6 +41,9 @@ const UNIFORMS = [
   "uS3",
   "uInk",
   "uInkOn",
+  "uOrbit",
+  "uPaint",
+  "uLineAlpha",
 ];
 const uni = {};
 let atlasTexture;
@@ -89,7 +92,7 @@ export function initGL() {
   return true;
 }
 
-/** Dessine toutes les couvertures dans une seule texture (taille en puissance de 2, requise pour les mipmaps). */
+/** Dessine les vignettes de tous les projets dans une seule texture (taille en puissance de 2, requise pour les mipmaps). */
 export async function buildAtlas() {
   const SW = 1024;
   const SH = 512;
@@ -97,15 +100,15 @@ export async function buildAtlas() {
   atlas.width = SW * ATLAS_COLS;
   atlas.height = SH * ATLAS_COLS;
   const c = atlas.getContext("2d");
-  c.fillStyle = "#222";
-  c.fillRect(0, 0, atlas.width, atlas.height);
   const list = PROJECTS.slice(0, MAX_PROJECTS);
   for (let i = 0; i < list.length; i++) {
-    await drawProjectCover(c, list[i], (i % ATLAS_COLS) * SW, Math.floor(i / ATLAS_COLS) * SH, SW, SH);
+    await drawCluster(c, list[i], (i % ATLAS_COLS) * SW, Math.floor(i / ATLAS_COLS) * SH, SW, SH);
   }
   if (!gl) return;
   gl.bindTexture(gl.TEXTURE_2D, atlasTexture);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true); // bords nets entre vignettes et grille
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
   gl.generateMipmap(gl.TEXTURE_2D);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -192,6 +195,9 @@ export function render() {
   gl.uniform2f(uni.uDir, camera.dir[0], camera.dir[1]);
   gl.uniform1f(uni.uTiles, camera.tiles);
   gl.uniform1f(uni.uSpectrum, camera.spectrum);
+  gl.uniform1f(uni.uOrbit, camera.orbit);
+  gl.uniform1f(uni.uPaint, camera.paint);
+  gl.uniform1f(uni.uLineAlpha, 0.8); // filets discrets
   gl.uniform1f(uni.uTime, camera.time);
   ["uS0", "uS1", "uS2", "uS3"].forEach((name, i) => gl.uniform3fv(uni[name], colors.spectrum[i]));
   gl.uniform1f(uni.uInkOn, inkActive() ? 1 : 0);

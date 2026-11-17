@@ -79,7 +79,7 @@ export function updateInk(dt) {
       // la teinte avance avec le temps et tourne un peu selon la direction du geste
       hue = (hue + 0.0009 * dt + Math.atan2(dy, dx) * 0.0006 + 1) % 1;
       const [r, g, b] = colorAt(hue);
-      const strength = Math.min(0.2, 0.03 + speed * 0.004);
+      const strength = Math.min(0.12, 0.02 + speed * 0.0025);
       const gx = x * SCALE;
       const gy = y * SCALE;
       const gradient = ctx.createRadialGradient(gx, gy, 0, gx, gy, radius);

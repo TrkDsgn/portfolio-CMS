@@ -1,23 +1,45 @@
-/* Écran de chargement : logo, anneau de progression et globe.
-   Le globe est le plan de travail lui-même (webgl/), vu de loin : une sphère quadrillée que des bandes
-   de couleur (--spectrum-1…4) balaient, comme le nom. À la fin, la caméra plonge vers la sphère jusqu'à
-   ce que sa surface devienne l'accueil ; les couleurs s'effacent et les vignettes apparaissent.
+/* Écran de chargement, comme une mise au point : le nom s'allume lettre par lettre au-dessus d'un petit
+   globe gris au maillage fin. La couleur (--spectrum-1…4) se répand depuis le centre du globe, puis la
+   caméra plonge vers la sphère jusqu'à ce que sa surface devienne l'accueil ; les couleurs s'effacent
+   et les vignettes apparaissent. Le globe est le plan de travail lui-même (webgl/), vu de loin.
    Animations réduites : pas de globe, l'accueil apparaît directement. */
 import { $, reducedMotion, ease } from "./utils.js";
 import { camera, app } from "./state.js";
 import { tween } from "./camera.js";
 import { revealText } from "./reveal.js";
 
-/** Durée minimale d'affichage, pour que le globe ait le temps d'apparaître. */
-const LOADER_MIN_MS = 2000;
+/** Durée minimale d'affichage : le temps que la couleur couvre le globe. */
+const LOADER_MIN_MS = 3600;
+/** Début et durée de l'extension de la couleur sur le globe. */
+const PAINT_DELAY_MS = 500;
+const PAINT_MS = 2800;
 /** Durée de la plongée vers l'accueil. */
-const DIVE_MS = 1800;
+const DIVE_MS = 2000;
 const loadStart = performance.now();
 
-/** Avance l'anneau de progression (0 → 1). */
-export function setLoaderProgress(value) {
-  const ring = document.getElementById("ld-fg");
-  if (ring) ring.style.strokeDashoffset = String(100 - 100 * value);
+/** Découpe le nom en lettres, chacune avec sa couleur du dégradé et son rang d'allumage. */
+function splitName() {
+  const name = $("#ld-name");
+  if (!name) return;
+  const cs = getComputedStyle(document.documentElement);
+  const stops = [1, 2, 3, 4].map(i => cs.getPropertyValue(`--spectrum-${i}`).trim());
+  const letters = [...name.textContent];
+  name.setAttribute("aria-label", name.textContent);
+  name.textContent = "";
+  letters.forEach((ch, i) => {
+    const span = document.createElement("span");
+    span.textContent = ch;
+    span.setAttribute("aria-hidden", "true");
+    // couleur : on parcourt les 3 premières couleurs du dégradé de gauche à droite
+    const f = (i / Math.max(1, letters.length - 1)) * 2;
+    const k = Math.min(1, Math.floor(f));
+    span.style.setProperty(
+      "--c",
+      `color-mix(in srgb, ${stops[k]} ${Math.round((1 - (f - k)) * 100)}%, ${stops[k + 1]})`,
+    );
+    span.style.setProperty("--i", i);
+    name.appendChild(span);
+  });
 }
 
 /** Place le globe sous l'anneau (centre de l'emplacement #ld-globe). */
@@ -33,15 +55,18 @@ export function placeGlobe() {
 /** Affiche l'écran de chargement (appelé au démarrage). */
 export function startLoader() {
   document.body.classList.add("loading");
-  setTimeout(() => setLoaderProgress(0.25), 200);
+  splitName();
   if (reducedMotion.matches) {
     document.body.classList.add("loading-still");
     return;
   }
   camera.orbit = 1;
   camera.spectrum = 1;
+  camera.paint = 0;
   camera.tiles = 0;
   placeGlobe();
+  // la couleur se répand depuis le centre du globe
+  setTimeout(() => tween(camera, "paint", 1, PAINT_MS, ease.inOut), PAINT_DELAY_MS);
 }
 
 /** Plongée : le globe grandit jusqu'à devenir l'accueil. */
@@ -54,14 +79,15 @@ function dive() {
     camera.tiles = 1;
     return;
   }
+  camera.paint = 1;
   tween(camera, "orbit", 0, DIVE_MS, ease.inOut);
-  tween(camera, "spectrum", 0, DIVE_MS * 1.2, ease.inOut);
-  setTimeout(() => tween(camera, "tiles", 1, DIVE_MS * 0.6, ease.out), DIVE_MS * 0.45);
+  // la grille arrive encore colorée, puis redevient grise
+  setTimeout(() => tween(camera, "spectrum", 0, DIVE_MS * 0.9, ease.inOut), DIVE_MS * 0.5);
+  setTimeout(() => tween(camera, "tiles", 1, DIVE_MS * 0.5, ease.out), DIVE_MS * 0.55);
 }
 
 /** Termine le chargement (au moins LOADER_MIN_MS après le début). */
 export function finishLoader(frame) {
-  setLoaderProgress(1);
   const remaining = Math.max(0, LOADER_MIN_MS - (performance.now() - loadStart));
   return new Promise(resolve => setTimeout(resolve, remaining)).then(() => {
     const loader = $("#loader");

@@ -15,9 +15,9 @@ export const cellSize = () => camera.cell;
    Le même calcul sert au shader (webgl/shaders.js) et à screenToWorld, pour viser juste au clic. */
 
 const HOME_CURVE = 0.32;
-const TILT = 0.5; // inclinaison maximale de la caméra à l'accueil, en radians
-const RADIUS = 1.7; // rayon de la sphère à l'accueil, × la plus grande dimension de l'écran
-const HORIZON_MARGIN = 0.05; // l'horizon reste juste au-dessus du haut de l'écran (radians)
+const TILT = 0.95; // inclinaison maximale de la caméra à l'accueil, en radians
+const RADIUS = 6; // rayon de la sphère à l'accueil, × la plus grande dimension de l'écran
+const HORIZON_MARGIN = 0.03; // l'horizon reste juste au-dessus du haut de l'écran (radians)
 const FOCAL = 1.1; // focale, × la plus grande dimension de l'écran
 
 /** Courbure effective (plate si les animations sont réduites). */

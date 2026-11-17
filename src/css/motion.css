@@ -14,7 +14,8 @@
   display: inline-block;
 }
 
-/* Écran de chargement : page noire, logo et anneau de progression, puis le plan de travail apparaît */
+/* Écran de chargement : le nom au-dessus d'un petit globe (le globe est le plan de travail, en WebGL,
+   visible au travers) ; puis la caméra plonge vers le globe jusqu'à l'accueil. Voir loader.js */
 .loader {
   position: fixed;
   inset: 0;
@@ -27,122 +28,52 @@
     visibility 0s linear 0.8s;
 }
 
-.loader::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 80vmin;
-  height: 80vmin;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(255 253 219 / 0.045), transparent 70%);
-  animation: ld-breathe 2.4s var(--ease-std) infinite alternate;
-}
-
-@keyframes ld-breathe {
-  to {
-    transform: translate(-50%, -50%) scale(1.12);
-    opacity: 0.6;
-  }
-}
-
 .ld-in {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.4rem;
+  gap: 1.6rem;
   transition:
     transform 0.9s var(--ease-out),
     opacity 0.6s var(--ease-dec);
 }
 
-.ld-mark {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.4rem;
-  color: var(--ink);
-  opacity: 0;
-  animation: ld-mark-on 1s var(--ease-dec) 0.15s forwards;
-}
-
-@keyframes ld-mark-on {
-  to {
-    opacity: 0.9;
-  }
-}
-
-.ld-mark .logo {
-  height: 6.4rem;
-}
-
-.ld-mark .name {
+/* Le nom : gris, puis chaque lettre s'allume dans sa couleur du dégradé (--c), l'une après l'autre */
+.ld-name {
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 3.2rem;
+  font-size: max(4.6rem, 32px);
   letter-spacing: -0.02em;
   line-height: 1;
-  /* le dégradé du globe défile dans les lettres */
-  background: linear-gradient(
-      90deg,
-      var(--spectrum-1),
-      var(--spectrum-2),
-      var(--spectrum-3),
-      var(--spectrum-4),
-      var(--spectrum-1)
-    )
-    0 0 / 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: ld-spectrum 3.6s linear infinite;
+  color: #55524e;
+  opacity: 0;
+  animation: ld-on 0.8s var(--ease-dec) 0.1s forwards;
 }
 
-@keyframes ld-spectrum {
-  to {
-    background-position: 150% 0;
-  }
-}
-
-/* Emplacement du globe sous l'anneau : le globe lui-même est dessiné par le plan de travail (WebGL) */
-.ld-globe {
-  display: block;
-  width: 18rem;
-  height: 18rem;
+.ld-name span {
+  animation: ld-letter 0.7s var(--ease-dec) forwards;
+  animation-delay: calc(900ms + var(--i, 0) * 120ms);
 }
 
 @keyframes ld-on {
   to {
-    opacity: 0.55;
+    opacity: 1;
   }
 }
 
-.ld-ring {
-  width: 3.2rem;
-  height: 3.2rem;
-  opacity: 0;
-  animation: ld-on 1s var(--ease-dec) 0.5s forwards;
+@keyframes ld-letter {
+  to {
+    color: var(--c);
+  }
 }
 
-.ld-ring circle {
-  fill: none;
-  stroke-width: 2;
-}
-
-.ld-ring .bg {
-  stroke: var(--line);
-}
-
-.ld-ring .fg {
-  stroke: var(--ink);
-  stroke-linecap: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-  transition: stroke-dashoffset 0.5s var(--ease-dec);
+/* Emplacement du globe sous le nom : le globe lui-même est dessiné par le plan de travail (WebGL) */
+.ld-globe {
+  display: block;
+  width: max(26rem, 190px);
+  height: max(26rem, 190px);
 }
 
 .loader.done .ld-in {
@@ -175,6 +106,10 @@ body.loading .frame {
 
 /* « Réduire les animations » : rien ne bouge */
 @media (prefers-reduced-motion: reduce) {
+  .ld-name span {
+    color: var(--c);
+  }
+
   *,
   *::before,
   *::after {

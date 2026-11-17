@@ -292,3 +292,24 @@ export async function drawProjectCover(c, P, ox, oy, W, H) {
   }
   c.restore();
 }
+
+/* Cluster d'un projet sur la grille : 6 vignettes, 2 rangées de 3 vignettes égales.
+   Les espaces entre vignettes restent transparents (la grille se voit au travers). */
+export async function drawCluster(c, P, ox, oy, W, H) {
+  const cw = W / 3;
+  const ch = H / 2;
+  const gap = Math.round(W * 0.005);
+  c.clearRect(ox, oy, W, H);
+  for (let k = 0; k < 6; k++) {
+    const x = ox + (k % 3) * cw + gap;
+    const y = oy + Math.floor(k / 3) * ch + gap;
+    const w = cw - 2 * gap;
+    const h = ch - 2 * gap;
+    c.save();
+    c.beginPath();
+    c.rect(x, y, w, h);
+    c.clip();
+    await drawTile(c, P, k, x, y, w, h);
+    c.restore();
+  }
+}

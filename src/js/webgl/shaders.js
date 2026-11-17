@@ -19,6 +19,7 @@ uniform float uCols; uniform float uAb; uniform vec2 uDir;
 uniform float uTiles; uniform float uSpectrum; uniform float uTime;
 uniform vec3 uS0; uniform vec3 uS1; uniform vec3 uS2; uniform vec3 uS3;
 uniform sampler2D uInk; uniform float uInkOn;
+uniform float uOrbit; uniform float uPaint; uniform float uLineAlpha;
 
 /* distance signée à un rectangle aux coins arrondis */
 float sdBox(vec2 p, vec2 b, float r){ vec2 q = abs(p)-b+r; return length(max(q,0.))+min(max(q.x,q.y),0.)-r; }
@@ -48,6 +49,7 @@ void main(){
   float ct = cos(uTilt), st = sin(uTilt);
   vec3 d = normalize(vec3(p.x, st * uFocal + ct * p.y, -ct * uFocal + st * p.y));
   vec2 w; float dist; float hit = 1.0;
+  vec3 qn = vec3(0.0, 0.0, 1.0);                                  /* point touché, sur la sphère unité */
   if(uRadius <= 0.0){
     float t = -uHeight / min(d.z, -1e-4);
     vec3 S = vec3(0.0, 0.0, uHeight) + t * d;
@@ -59,7 +61,8 @@ void main(){
     if(disc < 0.0) hit = 0.0;
     float t = -b - sqrt(max(disc, 0.0));
     vec3 Q = vec3(0.0, 0.0, oz) + t * d;
-    w = vec2(atan(Q.x, Q.z), -asin(clamp(Q.y / uRadius, -1.0, 1.0))) * uRadius;
+    qn = Q / uRadius;
+    w = vec2(atan(Q.x, Q.z), -asin(clamp(qn.y, -1.0, 1.0))) * uRadius;
     dist = t;
   }
   w = w / uZoom + uOff;                                          /* position dans le monde */
@@ -71,9 +74,25 @@ void main(){
 #endif
   float C = uCell;
 
-  /* grille, avec des niveaux plus larges quand on s'éloigne (globe) */
+  /* grille, avec des niveaux plus larges quand on s'éloigne */
   float line = max(grid(w, C, fw), max(grid(w, C * 4.0, fw), grid(w, C * 16.0, fw)));
-  vec3 lineCol = mix(uLine, spectrum(sp.y / uRes.y * uDpr * 0.9 - uTime * 0.28) * 0.95, uSpectrum);
+  /* globe vu de loin : méridiens et parallèles fins (48 × 24), fondus vers la grille en approchant */
+  float globe = smoothstep(0.35, 0.85, uOrbit);
+  if(globe > 0.0){
+    vec2 ll = vec2(atan(qn.x, qn.z) * 7.6394, asin(clamp(qn.y, -1.0, 1.0)) * 7.6394); /* 48 / 2π, 24 / π */
+#ifdef GL_OES_standard_derivatives
+    vec2 fl = max(fwidth(ll), vec2(1e-5));
+#else
+    vec2 fl = vec2(0.02);
+#endif
+    line = mix(line, grid(ll, 1.0, fl), globe);
+  }
+  line *= uLineAlpha;
+  /* couleur qui se répand depuis le centre du globe (chargement), sinon filets gris */
+  float ang = acos(clamp(qn.z, -1.0, 1.0));
+  float paint = (1.0 - smoothstep(uPaint * 2.0 - 0.4, uPaint * 2.0 + 0.05, ang)) * uSpectrum;
+  vec3 paintCol = spectrum(ang * 1.3 - uTime * 0.22) * 1.15;
+  vec3 lineCol = mix(uLine, paintCol, paint);
 
   /* encre : traînée de couleur laissée par la souris, séparée en rouge / vert / bleu */
   vec3 ink = vec3(0.0);
@@ -84,7 +103,7 @@ void main(){
     vec4 i1 = texture2D(uInk, uv + so), i2 = texture2D(uInk, uv), i3 = texture2D(uInk, uv - so);
     ink = vec3(i1.r * i1.a, i2.g * i2.a, i3.b * i3.a) * uInkOn * 2.5;
   }
-  vec3 col = mix(uBg, lineCol + ink * 2.2, line) + ink * 0.035;
+  vec3 col = mix(uBg, lineCol + ink * 1.5, line) + ink * 0.035 + paintCol * paint * 0.05 * hit;
 
   /* clusters : période 6 × 4 cellules, une rangée sur deux décalée de 3 cellules */
   vec2 P = vec2(6.0*C, 4.0*C);
@@ -110,7 +129,8 @@ void main(){
       float id = mod(cx + cy * 2.0, uN);
       vec2 uv = clamp(local / vec2(4.0*C, 2.0*C), 0.001, 0.999);
       vec2 slot = vec2(mod(id, uCols), floor(id / uCols));
-      vec3 tex = texture2D(uTex, (slot + uv) / vec2(uCols, uCols)).rgb;
+      vec4 texel = texture2D(uTex, (slot + uv) / vec2(uCols, uCols));
+      vec3 tex = texel.rgb;
       /* séparation des couleurs pendant un mouvement rapide */
       vec2 ab = uDir * uAb * 0.018;
       if(uAb > 0.001){
@@ -118,7 +138,9 @@ void main(){
         tex.b = texture2D(uTex, (slot + clamp(uv - ab, 0.001, 0.999)) / vec2(uCols, uCols)).b;
       }
       tex = mix(tex, tex * 1.06, hov) + ink * 0.08;
-      col = mix(col, tex, inside * uTiles);
+      /* atlas prémultiplié : transparent entre les vignettes, la grille se voit */
+      float m = inside * uTiles;
+      col = col * (1.0 - m * texel.a) + tex * m;
     }
   }
 

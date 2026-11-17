@@ -2,7 +2,7 @@
    Ouvre et ferme les panneaux, et fait zoomer la caméra sur un projet avant d'afficher son étude de cas. */
 import { $, $$, mobileQuery, ease } from "./utils.js";
 import { PROJECTS } from "./content.js";
-import { camera, app, dom } from "./state.js";
+import { camera, app, dom, HOME_ZOOM } from "./state.js";
 import { tween, viewCenter, cellSize, clusterCenter, nearestCluster } from "./camera.js";
 import { setHover } from "./input.js";
 import { revealText } from "./reveal.js";
@@ -99,9 +99,9 @@ async function closeProject() {
   dom.pill.setAttribute("aria-hidden", "true");
   dom.frame.classList.remove("is-hidden");
   dom.ticker.style.opacity = "";
-  const home = app.homeState || { off: camera.off.slice(), zoom: 1 };
+  const home = app.homeState || { off: camera.off.slice(), zoom: HOME_ZOOM };
   tween(camera, "curve", 0.32, 600, ease.inOut);
-  tween(camera, "zoom", 1, 600, ease.inOut);
+  tween(camera, "zoom", HOME_ZOOM, 600, ease.inOut);
   await tween(camera, "off", home.off, 600, ease.inOut);
 }
 

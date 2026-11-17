@@ -16,7 +16,7 @@ import { initGL, buildAtlas, readColors, resize } from "./webgl/renderer.js";
 import { startAnimation, updateDom } from "./animation.js";
 import { initInput } from "./input.js";
 import { initRouter, go, panelShift } from "./router.js";
-import { startLoader, setLoaderProgress, finishLoader, placeGlobe } from "./loader.js";
+import { startLoader, finishLoader, placeGlobe } from "./loader.js";
 import { startLoopClock } from "./project/gallery.js";
 import { initContact } from "./contact.js";
 import { showFallback } from "./fallback.js";
@@ -65,7 +65,6 @@ startLoopClock();
 fontsReady()
   .then(() => {
     resize();
-    setLoaderProgress(0.55);
     return webglOk ? buildAtlas() : showFallback();
   })
   .then(() => finishLoader(dom.frame));
