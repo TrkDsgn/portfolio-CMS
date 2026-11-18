@@ -156,7 +156,7 @@ export function resize() {
   camera.cell = Math.round(9 * rem * (mobileQuery.matches ? 0.95 : 1));
   camera.headPx = dom.frame.getBoundingClientRect().height;
   document.documentElement.style.setProperty("--cell", camera.cell + "px");
-  camera.dpr = Math.min(devicePixelRatio || 1, 1.5);
+  camera.dpr = Math.min(devicePixelRatio || 1, 2); // pleine résolution sur écran Retina
   camera.W = innerWidth;
   camera.H = innerHeight;
   dom.canvas.width = Math.round(camera.W * camera.dpr);

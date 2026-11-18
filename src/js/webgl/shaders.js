@@ -33,12 +33,13 @@ vec3 spectrum(float f){
   return mix(uS3, uS0, t);
 }
 
-/* filets d'une grille d'espacement s ; ils s'effacent quand ils deviennent trop serrés à l'écran */
+/* filets d'une grille d'espacement s, épais d'un pixel et lissés sur un pixel et demi (pas d'escalier
+   au loin) ; ils s'effacent quand ils deviennent trop serrés à l'écran (pas de moiré) */
 float grid(vec2 w, float s, vec2 fw){
-  vec2 g = abs(fract(w / s + 0.5) - 0.5) * s;
-  vec2 a = 1.0 - smoothstep(fw * 0.3, fw * 1.0, g);
-  float px = max(max(fw.x, fw.y), 1e-4);
-  return max(a.x, a.y) * smoothstep(3.0, 9.0, s / px);
+  vec2 g = abs(fract(w / s + 0.5) - 0.5) * s / fw;             /* distance au filet, en pixels */
+  vec2 a = 1.0 - smoothstep(-0.25, 1.25, g - 0.5);
+  vec2 dense = smoothstep(3.0, 9.0, s / fw);                    /* espacement à l'écran, par direction */
+  return max(a.x * dense.x, a.y * dense.y);
 }
 
 void main(){
