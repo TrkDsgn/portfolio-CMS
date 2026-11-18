@@ -39,7 +39,7 @@
     opacity 0.6s var(--ease-dec);
 }
 
-/* Le nom : gris au départ ; loader.js allume les lettres une à une, puis le fait glisser vers l'en-tête */
+/* Le nom : gris, puis chaque lettre s'allume dans sa couleur du dégradé (--c), l'une après l'autre */
 .ld-name {
   margin: 0;
   font-family: var(--font-display);
@@ -52,9 +52,20 @@
   animation: ld-on 0.8s var(--ease-dec) 0.1s forwards;
 }
 
+.ld-name span {
+  animation: ld-letter 0.7s var(--ease-dec) forwards;
+  animation-delay: calc(900ms + var(--i, 0) * 120ms);
+}
+
 @keyframes ld-on {
   to {
     opacity: 1;
+  }
+}
+
+@keyframes ld-letter {
+  to {
+    color: var(--c);
   }
 }
 
@@ -65,8 +76,8 @@
   height: max(26rem, 190px);
 }
 
-/* Pendant que le nom du chargement rejoint l'en-tête, celui de l'en-tête attend */
-.ld-flying .f-logo .name {
+.loader.done .ld-in {
+  transform: translateY(-4rem);
   opacity: 0;
 }
 
@@ -95,6 +106,10 @@ body.loading .frame {
 
 /* « Réduire les animations » : rien ne bouge */
 @media (prefers-reduced-motion: reduce) {
+  .ld-name span {
+    color: var(--c);
+  }
+
   *,
   *::before,
   *::after {

@@ -35,7 +35,7 @@ function frame(now) {
   const still = Math.abs(camera.vel[0]) + Math.abs(camera.vel[1]) < 0.5;
   if (app.view !== "project" && !app.dragging && app.hoverId === -1 && !reducedMotion.matches && still) {
     // vu de loin (chargement), le globe tourne nettement plus vite
-    camera.off[0] += (DRIFT * (1 + 6 * camera.orbit) * dt) / 1000 / camera.zoom;
+    camera.off[0] += (DRIFT * (1 + 40 * camera.orbit) * dt) / 1000 / camera.zoom;
     camera.dirty = true;
   }
 

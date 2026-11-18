@@ -8,7 +8,7 @@ export const MAX_PROJECTS = 16;
 export const gridCount = Math.min(PROJECTS.length, MAX_PROJECTS);
 
 /** Zoom de l'accueil (plus grand = vignettes plus grandes). */
-export const HOME_ZOOM = 1.4;
+export const HOME_ZOOM = 1.9;
 
 /** Caméra et rendu du plan de travail. */
 export const camera = {
@@ -25,7 +25,6 @@ export const camera = {
   globeRadius: 80, // rayon du globe à l'écran pendant le chargement (px)
   spectrum: 0, // lignes colorées par le dégradé (1 = globe du chargement)
   paint: 0, // étendue de la couleur sur le globe (0 → 1 pendant le chargement)
-  globeAlpha: 1, // visibilité du globe (0 → 1 au début du chargement)
   tiles: 1, // apparition des vignettes (0 → 1 à la fin du chargement, vignette par vignette)
   time: 0, // horloge (s), pour le défilement des couleurs
   dir: [0, 1], // direction du mouvement

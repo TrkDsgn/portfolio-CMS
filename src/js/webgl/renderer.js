@@ -42,7 +42,6 @@ const UNIFORMS = [
   "uOrbit",
   "uPaint",
   "uLineAlpha",
-  "uGlobeAlpha",
 ];
 const uni = {};
 let atlasTexture;
@@ -93,8 +92,10 @@ export function initGL() {
 
 /** Dessine les vignettes de tous les projets dans une seule texture (taille en puissance de 2, requise pour les mipmaps). */
 export async function buildAtlas() {
-  const SW = 1024;
-  const SH = 512;
+  // 2048 × 1024 px par projet (vignettes nettes même au premier plan), 1024 × 512 si la carte graphique est limitée
+  const maxSize = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : 4096;
+  const SW = maxSize >= 2048 * ATLAS_COLS ? 2048 : 1024;
+  const SH = SW / 2;
   const atlas = document.createElement("canvas");
   atlas.width = SW * ATLAS_COLS;
   atlas.height = SH * ATLAS_COLS;
@@ -113,6 +114,13 @@ export async function buildAtlas() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  // filtrage anisotrope : les vignettes vues en biais (haut de l'écran) restent nettes
+  const aniso =
+    gl.getExtension("EXT_texture_filter_anisotropic") || gl.getExtension("WEBKIT_EXT_texture_filter_anisotropic");
+  if (aniso) {
+    const max = gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+    gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(16, max));
+  }
   camera.dirty = true;
 }
 
@@ -195,7 +203,6 @@ export function render() {
   gl.uniform1f(uni.uOrbit, camera.orbit);
   gl.uniform1f(uni.uPaint, camera.paint);
   gl.uniform1f(uni.uLineAlpha, 0.8); // filets discrets
-  gl.uniform1f(uni.uGlobeAlpha, camera.globeAlpha);
   gl.uniform1f(uni.uTime, camera.time);
   ["uS0", "uS1", "uS2", "uS3"].forEach((name, i) => gl.uniform3fv(uni[name], colors.spectrum[i]));
   gl.uniform1f(uni.uInkOn, inkActive() ? 1 : 0);
