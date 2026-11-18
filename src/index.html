@@ -141,10 +141,19 @@
           ></textarea>
           <div class="msg t-micro">Écris quelques lignes sur ton projet.</div>
         </div>
+        <!-- Champ piège, invisible : seuls les robots le remplissent -->
+        <div class="hp" aria-hidden="true">
+          <label for="f-website">Site web</label
+          ><input id="f-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
         <div class="form-foot">
           <button class="btn" type="submit" id="submit"></button>
+          <div class="status" id="status-ok" hidden aria-live="polite">
+            <span class="t-label accent">Message envoyé</span>
+            <p class="t-list" style="margin: 0">Merci, ton message est bien arrivé. Je te réponds sous 48 h.</p>
+          </div>
           <div class="status" id="status" hidden aria-live="polite">
-            <span class="t-label accent">Message prêt</span>
+            <span class="t-label accent">Envoi impossible pour le moment</span>
             <p class="t-list" style="margin: 0 0 1.2rem">
               Ta messagerie s'ouvre avec le message prêt à envoyer. Si rien ne s'ouvre, copie-le et envoie-le à
               <span id="status-email"></span>.

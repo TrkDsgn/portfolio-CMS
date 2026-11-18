@@ -2,6 +2,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import contact from "../api/contact.js";
 import { ROOT, loadContent, renderContentJs, renderIndex } from "./build.mjs";
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -32,6 +33,8 @@ function safeJoin(base, p) {
 
 http
   .createServer((req, res) => {
+    // formulaire de contact (même fonction que sur Vercel ; sans RESEND_API_KEY, le site bascule sur la messagerie)
+    if (req.url.split("?")[0] === "/api/contact") return contact(req, res);
     try {
       let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
       if (p === "/" || p === "/index.html")

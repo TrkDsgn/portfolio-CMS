@@ -1,5 +1,5 @@
-/* Formulaire de contact : vérification des champs, ouverture de la messagerie avec le message prêt,
-   boutons « copier le message » et « copier l'adresse ». */
+/* Formulaire de contact : vérification des champs, puis envoi direct par e-mail (api/contact.js).
+   Si l'envoi échoue, la messagerie s'ouvre avec le message prêt (et un bouton pour le copier). */
 import { $ } from "./utils.js";
 import { SITE } from "./content.js";
 import { ICON_COPY } from "./page.js";
@@ -31,23 +31,34 @@ function selectNextTo(button) {
   selection.addRange(range);
 }
 
-function onSubmit(e) {
-  e.preventDefault();
-  let firstInvalid = null;
-  RULES.forEach(([id, test]) => {
-    const field = $("#" + id);
-    const invalid = !test(field.value);
-    field.closest(".field").classList.toggle("err", invalid);
-    field.setAttribute("aria-invalid", invalid);
-    if (invalid && !firstInvalid) firstInvalid = field;
-  });
-  if (firstInvalid) {
-    firstInvalid.focus();
-    return;
+/** Envoie le message au serveur (api/contact.js) ; renvoie true si l'e-mail est parti. */
+async function sendMessage() {
+  const f = new FormData(form);
+  const payload = Object.fromEntries(
+    ["name", "email", "company", "type", "message", "website"].map(k => [k, f.get(k) || ""]),
+  );
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12000);
+  try {
+    const r = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    const data = await r.json().catch(() => ({}));
+    return r.ok && data.ok === true;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
   }
+}
+
+/** Secours si l'envoi échoue : la messagerie s'ouvre avec le message prêt, et il peut être copié. */
+function openMailFallback() {
   $("#status").hidden = false;
   $("#copy-msg").focus();
-  // ouvre la messagerie
   const subject = "Projet : " + $("#f-type").value + " - " + $("#f-name").value;
   const mailto = document.createElement("a");
   mailto.href =
@@ -61,6 +72,38 @@ function onSubmit(e) {
   document.body.appendChild(mailto);
   mailto.click();
   mailto.remove();
+}
+
+async function onSubmit(e) {
+  e.preventDefault();
+  let firstInvalid = null;
+  RULES.forEach(([id, test]) => {
+    const field = $("#" + id);
+    const invalid = !test(field.value);
+    field.closest(".field").classList.toggle("err", invalid);
+    field.setAttribute("aria-invalid", invalid);
+    if (invalid && !firstInvalid) firstInvalid = field;
+  });
+  if (firstInvalid) {
+    firstInvalid.focus();
+    return;
+  }
+  const button = $("#submit");
+  const label = button.textContent;
+  button.disabled = true;
+  button.textContent = "Envoi…";
+  $("#status").hidden = true;
+  $("#status-ok").hidden = true;
+  const sent = await sendMessage();
+  button.disabled = false;
+  button.textContent = label;
+  if (sent) {
+    form.reset();
+    $("#status-ok").hidden = false;
+    $("#status-ok").focus?.();
+  } else {
+    openMailFallback();
+  }
 }
 
 /** Efface l'erreur d'un champ dès qu'on le corrige. */

@@ -36,7 +36,7 @@ scripts/
   images.mjs             versions légères des images (480/960/1600 px)
   dev.mjs                serveur local (fichiers source, sans build)
   preview.mjs            sert le build dist/ en local
-api/                     connexion GitHub du CMS (fonctions Node sur Vercel)
+api/                     fonctions Node sur Vercel : connexion GitHub du CMS (auth, callback), formulaire (contact)
 ```
 
 ## Travailler en local
@@ -91,6 +91,10 @@ Les animations « boucles » sont du code (`src/js/loops.js`) : le CMS permet de
 - Vercel : projet `portfolio`, Framework Preset « Other » (le `vercel.json` règle build et dossier de sortie).
 - Connexion au CMS : OAuth App GitHub « Portfolio CMS » (callback `https://tarikbouabid.vercel.app/api/callback`)
   et variables `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` dans Vercel.
+
+- Formulaire de contact : `api/contact.js` envoie chaque message par e-mail via Resend.
+  Variable `RESEND_API_KEY` dans Vercel (et facultatives : `CONTACT_TO`, `CONTACT_FROM`).
+  Sans clé, ou si l'envoi échoue, le formulaire ouvre la messagerie avec le message prêt.
 
 > La connexion au CMS fonctionne sur le domaine de production (celui déclaré dans l'OAuth App),
 > pas sur les URLs de preview Vercel.

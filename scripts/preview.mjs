@@ -2,6 +2,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import contact from "../api/contact.js";
 import { ROOT } from "./build.mjs";
 
 const DIST = path.join(ROOT, "dist");
@@ -25,6 +26,8 @@ const TYPES = {
 
 http
   .createServer((req, res) => {
+    // formulaire de contact (même fonction que sur Vercel ; sans RESEND_API_KEY, le site bascule sur la messagerie)
+    if (req.url.split("?")[0] === "/api/contact") return contact(req, res);
     let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
     if (p.endsWith("/")) p += "index.html";
     let file = path.join(DIST, p);

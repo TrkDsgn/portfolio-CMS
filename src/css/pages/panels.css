@@ -120,6 +120,15 @@
   align-items: flex-start;
 }
 
+/* Champ piège anti-robots, hors de l'écran */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* Encart affiché après l'envoi du formulaire */
 .status {
   border: var(--hair) solid var(--line);
