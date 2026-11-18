@@ -4,7 +4,7 @@ import { PROJECTS } from "../content.js";
 import { camera, dom, MAX_PROJECTS, gridCount } from "../state.js";
 import { cellSize, viewCenter, projection, curveNow } from "../camera.js";
 import { VERTEX_SHADER, FRAGMENT_SHADER } from "./shaders.js";
-import { drawCluster } from "./tiles.js";
+import { drawProjectCover } from "./tiles.js";
 import { inkCanvas, updateInk, inkActive, resizeInk, readInkColors } from "./ink.js";
 
 const gl = dom.canvas.getContext("webgl", { antialias: false, alpha: false, premultipliedAlpha: false });
@@ -90,7 +90,7 @@ export function initGL() {
   return true;
 }
 
-/** Dessine les vignettes de tous les projets dans une seule texture (taille en puissance de 2, requise pour les mipmaps). */
+/** Dessine la couverture de chaque projet dans une seule texture (taille en puissance de 2, requise pour les mipmaps). */
 export async function buildAtlas() {
   // 2048 × 1024 px par projet (vignettes nettes même au premier plan), 1024 × 512 si la carte graphique est limitée
   const maxSize = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : 4096;
@@ -102,7 +102,7 @@ export async function buildAtlas() {
   const c = atlas.getContext("2d");
   const list = PROJECTS.slice(0, MAX_PROJECTS);
   for (let i = 0; i < list.length; i++) {
-    await drawCluster(c, list[i], (i % ATLAS_COLS) * SW, Math.floor(i / ATLAS_COLS) * SH, SW, SH);
+    await drawProjectCover(c, list[i], (i % ATLAS_COLS) * SW, Math.floor(i / ATLAS_COLS) * SH, SW, SH);
   }
   if (!gl) return;
   gl.bindTexture(gl.TEXTURE_2D, atlasTexture);

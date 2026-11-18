@@ -4,7 +4,7 @@ import { $, $$, reducedMotion } from "../utils.js";
 import { ASSETS, IMAGES } from "../content.js";
 import { app, dom } from "../state.js";
 import { getLoop, imagesFor } from "../loops/index.js";
-import { revealText } from "../reveal.js";
+import { revealText, EASE_RISE } from "../reveal.js";
 
 const loopImages = {};
 let activeLoops = [];
@@ -185,75 +185,26 @@ export function startLoopClock() {
   requestAnimationFrame(tick);
 }
 
-/* Entrée des visuels : l'image apparaît par blocs de pixels en désordre qui s'affinent
-   jusqu'à l'image nette (dessiné dans un canvas posé sur la figure, retiré à la fin). */
-const REVEAL_MS = 900;
-const blockHash = (x, y) => {
-  const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
-  return n - Math.floor(n);
-};
-
-/** Rectangle de la source à dessiner pour imiter object-fit (cover ou contain). */
-function fitRect(source, W, H) {
-  const sw = source.naturalWidth || source.width;
-  const sh = source.naturalHeight || source.height;
-  if (!sw || !sh) return null;
-  const fit = getComputedStyle(source).objectFit;
-  const s = fit === "contain" ? Math.min(W / sw, H / sh) : Math.max(W / sw, H / sh);
-  return [(W - sw * s) / 2, (H - sh * s) / 2, sw * s, sh * s];
-}
-
-function pixelReveal(fig, delay) {
-  fig.classList.remove("px-wait");
-  const source = fig.querySelector("img, canvas");
-  if (!source) return;
-  const overlay = document.createElement("canvas");
-  overlay.className = "px-reveal";
-  overlay.setAttribute("aria-hidden", "true");
-  fig.insertBefore(overlay, source.nextSibling);
-  const ctx = overlay.getContext("2d");
-  const small = document.createElement("canvas");
-  const sctx = small.getContext("2d");
-  const background = getComputedStyle(fig).backgroundColor;
-  const start = performance.now() + delay;
-  const ready = source.tagName === "IMG" && !source.complete ? source.decode().catch(() => {}) : Promise.resolve();
-
-  ready.then(() => {
-    const frame = now => {
-      const rect = fig.getBoundingClientRect();
-      const density = Math.min(devicePixelRatio || 1, 2);
-      const W = Math.max(2, Math.round(rect.width * density));
-      const H = Math.max(2, Math.round(rect.height * density));
-      if (overlay.width !== W || overlay.height !== H) {
-        overlay.width = W;
-        overlay.height = H;
-      }
-      const t = Math.min(1, Math.max(0, (now - start) / REVEAL_MS));
-      const e = 1 - Math.pow(1 - t, 3);
-      ctx.fillStyle = background;
-      ctx.fillRect(0, 0, W, H);
-      // image réduite (blocs de pixels de plus en plus fins)
-      const block = Math.max(1, Math.round((1 - e) * 30 * density));
-      small.width = Math.max(1, Math.ceil(W / block));
-      small.height = Math.max(1, Math.ceil(H / block));
-      const r = fitRect(source, small.width, small.height);
-      if (r) sctx.drawImage(source, r[0], r[1], r[2], r[3]);
-      ctx.imageSmoothingEnabled = false;
-      // les zones apparaissent dans le désordre
-      const grid = 44 * density;
-      for (let gy = 0; gy < H; gy += grid) {
-        for (let gx = 0; gx < W; gx += grid) {
-          if (blockHash(gx / grid, gy / grid) > e * 1.5) continue;
-          const sx = gx / block;
-          const sy = gy / block;
-          ctx.drawImage(small, sx, sy, grid / block, grid / block, gx, gy, grid, grid);
-        }
-      }
-      if (t < 1) requestAnimationFrame(frame);
-      else overlay.remove();
-    };
-    requestAnimationFrame(frame);
-  });
+/* Entrée des visuels : chaque visuel sort du sol (masque qui s'ouvre vers le haut + image qui remonte dans son cadre) */
+function riseFigure(fig, delay) {
+  fig.style.clipPath = "";
+  fig.style.visibility = "";
+  fig.animate(
+    [
+      { clipPath: "inset(100% 0 0 0)", transform: "translateY(8rem)" },
+      { clipPath: "inset(0% 0 0 0)", transform: "translateY(0)" },
+    ],
+    { duration: 720, delay, easing: EASE_RISE, fill: "backwards" },
+  );
+  const inner = fig.querySelector("canvas, img");
+  if (inner) {
+    inner.animate([{ transform: "translateY(-18%) scale(1.18)" }, { transform: "translateY(0) scale(1)" }], {
+      duration: 820,
+      delay,
+      easing: EASE_RISE,
+      fill: "backwards",
+    });
+  }
 }
 
 /** Anime l'arrivée des visuels et des blocs de texte : tout de suite s'ils sont à l'écran, sinon au défilement.
@@ -272,13 +223,13 @@ export function animateGallery(fromHome) {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         galleryObserver.unobserve(entry.target);
-        pixelReveal(entry.target, batch++ * 90);
+        riseFigure(entry.target, batch++ * 60);
       });
     },
     { root: project, rootMargin: "0px 0px -6% 0px" },
   );
   const viewportHeight = innerHeight;
-  const base = fromHome ? 150 : 40;
+  const base = fromHome ? 120 : 40;
   let n = 0;
   const textObserver = new IntersectionObserver(
     entries =>
@@ -295,9 +246,9 @@ export function animateGallery(fromHome) {
   });
   $$("#gallery figure", project).forEach(fig => {
     const rect = fig.getBoundingClientRect();
-    if (rect.top < viewportHeight && rect.bottom > 0) pixelReveal(fig, base + n++ * 160);
+    if (rect.top < viewportHeight && rect.bottom > 0) riseFigure(fig, base + n++ * 70);
     else {
-      fig.classList.add("px-wait");
+      fig.style.clipPath = "inset(100% 0 0 0)";
       galleryObserver.observe(fig);
     }
   });

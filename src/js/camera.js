@@ -15,10 +15,8 @@ export const cellSize = () => camera.cell;
    Le même calcul sert au shader (webgl/shaders.js) et à screenToWorld, pour viser juste au clic. */
 
 const HOME_CURVE = 0.32;
-const TILT = 0.95; // inclinaison de départ de la caméra (ajustée selon l'horizon), en radians
-const MAX_TILT = 1.25; // inclinaison maximale
-const RADIUS = 7; // rayon de la sphère à l'accueil, × la plus grande dimension de l'écran
-const HORIZON_MARGIN = 0.004; // < 0 : l'horizon passe juste sous l'en-tête, les coins du haut plongent (radians)
+const TILT = 0.68; // inclinaison de la caméra à l'accueil, en radians (perspective : le haut s'éloigne)
+const RADIUS = 4.2; // rayon de la sphère à l'accueil, × la plus grande dimension de l'écran (grand = presque plat)
 const FOCAL = 1.1; // focale, × la plus grande dimension de l'écran
 
 /** Courbure effective (plate si les animations sont réduites). */
@@ -40,23 +38,14 @@ export function projection() {
   const k = Math.max(0, curveNow() / HOME_CURVE);
   const o = Math.min(1, Math.max(0, camera.orbit));
   const focal = FOCAL * size;
+  const tilt0 = TILT * Math.min(k, 1);
+  // grande sphère : les rangées restent lisibles, seuls les coins du haut plongent vers le fond
   const raw = k > 0.001 ? (RADIUS * size) / k : 0;
   // globe vu de loin : rayon ajusté pour que le tour complet tombe juste sur la grille (pas de couture)
   const period = 16 * camera.cell * camera.zoom;
   const snapped = raw > 0 ? (Math.max(1, Math.round((2 * Math.PI * raw) / period)) * period) / (2 * Math.PI) : 0;
   const radius = raw + (snapped - raw) * Math.min(1, camera.orbit * 4);
-  // inclinaison réglée pour que l'horizon de la sphère tombe juste sous l'en-tête : au centre la surface
-  // touche l'en-tête, dans les coins elle plonge vers le fond (effet d'aspiration en défilant)
-  let tilt = TILT;
-  if (radius > 0) {
-    const top = Math.atan((viewCenter()[1] - camera.headPx) / focal); // angle entre le centre et le bas de l'en-tête
-    for (let i = 0; i < 6; i++) {
-      const h = focal * Math.cos(tilt);
-      const horizon = Math.acos(radius / (radius + h)); // horizon, sous l'horizontale
-      tilt = Math.min(MAX_TILT, Math.max(0, Math.PI / 2 - top - horizon - HORIZON_MARGIN));
-    }
-  }
-  tilt *= Math.min(k, 1);
+  let tilt = tilt0;
   tilt *= 1 - o;
   // hauteur pour qu'au centre 1 px d'écran = 1 unité du monde ; de loin, le globe tient dans son emplacement
   const near = focal * Math.cos(tilt);
