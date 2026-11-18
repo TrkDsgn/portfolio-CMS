@@ -8,7 +8,7 @@ export const MAX_PROJECTS = 16;
 export const gridCount = Math.min(PROJECTS.length, MAX_PROJECTS);
 
 /** Zoom de l'accueil (plus grand = vignettes plus grandes). */
-export const HOME_ZOOM = 1.1;
+export const HOME_ZOOM = 1.45;
 
 /** Caméra et rendu du plan de travail. */
 export const camera = {
