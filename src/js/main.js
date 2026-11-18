@@ -19,6 +19,7 @@ import { initRouter, go, panelShift } from "./router.js";
 import { startLoader, finishLoader, placeGlobe } from "./loader.js";
 import { startLoopClock } from "./project/gallery.js";
 import { initContact } from "./contact.js";
+import { initCursorLabel } from "./project/case-study.js";
 import { showFallback } from "./fallback.js";
 
 /** Attend les polices (2,5 s au plus) : les couvertures dessinées en canvas en ont besoin. */
@@ -60,6 +61,7 @@ reducedMotion.addEventListener("change", () => (camera.dirty = true));
 initInput();
 initRouter();
 initContact();
+initCursorLabel();
 startLoopClock();
 
 fontsReady()

@@ -13,13 +13,21 @@ export const FRAGMENT_SHADER = `#ifdef GL_OES_standard_derivatives
 precision highp float;
 uniform vec2 uRes; uniform float uDpr; uniform vec2 uOff; uniform float uZoom; uniform vec2 uCenter;
 uniform float uFocal; uniform float uTilt; uniform float uRadius; uniform float uHeight; uniform float uCurve;
-uniform float uCell; uniform sampler2D uTex; uniform float uN; uniform vec2 uHover; uniform float uHoverAmt;
+uniform float uCell; uniform sampler2D uTex; uniform float uN;
 uniform vec3 uBg; uniform vec3 uLine; uniform vec3 uDeep;
 uniform float uCols; uniform float uAb; uniform vec2 uDir;
 uniform float uTiles; uniform float uSpectrum; uniform float uTime;
 uniform vec3 uS0; uniform vec3 uS1; uniform vec3 uS2; uniform vec3 uS3;
 uniform sampler2D uInk; uniform float uInkOn;
-uniform float uOrbit; uniform float uPaint; uniform float uLineAlpha;
+uniform float uOrbit; uniform float uPaint; uniform float uLineAlpha; uniform float uGlobeAlpha;
+
+/* bruit pseudo-aléatoire (taches de couleur du globe, trame des vignettes) */
+float hash(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+float noise(vec3 x){
+  vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
+}
 
 /* distance signée à un rectangle aux coins arrondis */
 float sdBox(vec2 p, vec2 b, float r){ vec2 q = abs(p)-b+r; return length(max(q,0.))+min(max(q.x,q.y),0.)-r; }
@@ -87,11 +95,15 @@ void main(){
 #endif
     line = mix(line, grid(ll, 1.0, fl), globe);
   }
-  line *= uLineAlpha;
-  /* couleur qui se répand depuis le centre du globe (chargement), sinon filets gris */
+  /* couleur qui se répand depuis le centre du globe (chargement) en taches irrégulières, sinon filets gris */
   float ang = acos(clamp(qn.z, -1.0, 1.0));
-  float paint = (1.0 - smoothstep(uPaint * 2.0 - 0.4, uPaint * 2.0 + 0.05, ang)) * uSpectrum;
-  vec3 paintCol = spectrum(ang * 1.3 - uTime * 0.22) * 1.15;
+  float n = noise(qn * 3.2 + vec3(0.0, 0.0, uTime * 0.3));
+  float n2 = noise(qn * 7.0 - vec3(uTime * 0.2, 0.0, 0.0));
+  float edge = uPaint * 2.3 - ang + (n - 0.5) * 1.1;
+  float paint = smoothstep(0.0, 0.3, edge) * (0.75 + 0.25 * n2) * uSpectrum;
+  vec3 paintCol = spectrum(n * 1.7 + n2 * 0.5 + uTime * 0.06) * 1.6;
+  /* au repos, le globe est à peine visible ; la couleur l'allume */
+  line *= uLineAlpha * mix(1.0, (0.3 + 0.7 * paint / max(uSpectrum, 1e-3)) * uGlobeAlpha, globe);
   vec3 lineCol = mix(uLine, paintCol, paint);
 
   /* encre : traînée de couleur laissée par la souris, séparée en rouge / vert / bleu */
@@ -103,7 +115,8 @@ void main(){
     vec4 i1 = texture2D(uInk, uv + so), i2 = texture2D(uInk, uv), i3 = texture2D(uInk, uv - so);
     ink = vec3(i1.r * i1.a, i2.g * i2.a, i3.b * i3.a) * uInkOn * 2.5;
   }
-  vec3 col = mix(uBg, lineCol + ink * 1.5, line) + ink * 0.035 + paintCol * paint * 0.05 * hit;
+  vec3 col = mix(uBg, lineCol + ink * 1.5, line) + ink * 0.03 + paintCol * paint * 0.04 * hit;
+  col += vec3(0.012) * hit * globe * uGlobeAlpha;                /* disque sombre du globe */
 
   /* clusters : période 6 × 4 cellules, une rangée sur deux décalée de 3 cellules */
   vec2 P = vec2(6.0*C, 4.0*C);
@@ -113,10 +126,7 @@ void main(){
   vec2 local = w - vec2(cx * P.x + xo, cy * P.y) - vec2(C, C);
   vec2 lc = vec2(2.0*C, C);
 
-  /* le cluster survolé grossit légèrement */
-  float hov = (abs(cx-uHover.x)<.5 && abs(cy-uHover.y)<.5) ? uHoverAmt : 0.0;
-  local = lc + (local - lc) / (1.0 + 0.045 * hov);
-  float pxl = max(fw.x, fw.y) * uDpr / (1.0 + 0.045 * hov);
+  float pxl = max(fw.x, fw.y) * uDpr;
 
   if(uTiles > 0.0 && local.x > -C && local.x < 5.0*C && local.y > -C && local.y < 3.0*C){
     float gap = C * 0.035;
@@ -129,6 +139,17 @@ void main(){
       float id = mod(cx + cy * 2.0, uN);
       vec2 uv = clamp(local / vec2(4.0*C, 2.0*C), 0.001, 0.999);
       vec2 slot = vec2(mod(id, uCols), floor(id / uCols));
+      /* apparition vignette par vignette : des blocs de pixels en désordre qui se mettent en place */
+      vec2 tcell = floor(uv * vec2(3.0, 2.0));
+      float tr = hash(vec3(cx + tcell.x * 0.37, cy + tcell.y * 0.61, 3.7));
+      float tp = clamp((uTiles * 1.8 - tr * 0.8) * 2.2, 0.0, 1.0);
+      /* mosaïque : gros blocs au départ, de plus en plus fins ; les blocs apparaissent dans le désordre */
+      float q = floor((1.0 - tp) * 6.0) / 6.0 * 0.1;
+      vec2 qs = vec2(q * 0.5, q);
+      vec2 uvq = q > 0.001 ? (floor(uv / qs) + 0.5) * qs : uv;
+      vec2 coarse = floor(uv * vec2(12.0, 6.0));
+      float dith = tp < 1.0 ? step(hash(vec3(coarse, cx * 1.3 + cy * 7.1)), tp * 1.3) : 1.0;
+      uv = uvq;
       vec4 texel = texture2D(uTex, (slot + uv) / vec2(uCols, uCols));
       vec3 tex = texel.rgb;
       /* séparation des couleurs pendant un mouvement rapide */
@@ -137,9 +158,9 @@ void main(){
         tex.r = texture2D(uTex, (slot + clamp(uv + ab, 0.001, 0.999)) / vec2(uCols, uCols)).r;
         tex.b = texture2D(uTex, (slot + clamp(uv - ab, 0.001, 0.999)) / vec2(uCols, uCols)).b;
       }
-      tex = mix(tex, tex * 1.06, hov) + ink * 0.08;
+      tex += ink * 0.08;
       /* atlas prémultiplié : transparent entre les vignettes, la grille se voit */
-      float m = inside * uTiles;
+      float m = inside * dith * step(0.001, tp);
       col = col * (1.0 - m * texel.a) + tex * m;
     }
   }

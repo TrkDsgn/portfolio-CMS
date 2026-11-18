@@ -1,12 +1,12 @@
 /* Navigation par l'adresse (#about, #contact, #projet-<slug>, ou rien pour l'accueil).
-   Ouvre et ferme les panneaux, et fait zoomer la caméra sur un projet avant d'afficher son étude de cas. */
+   Ouvre et ferme les panneaux et les études de cas. */
 import { $, $$, mobileQuery, ease } from "./utils.js";
 import { PROJECTS } from "./content.js";
-import { camera, app, dom, HOME_ZOOM } from "./state.js";
-import { tween, viewCenter, cellSize, clusterCenter, nearestCluster } from "./camera.js";
+import { camera, app, dom } from "./state.js";
+import { tween } from "./camera.js";
 import { setHover } from "./input.js";
 import { revealText } from "./reveal.js";
-import { renderProject } from "./project/case-study.js";
+import { renderProject, hideCursorLabel } from "./project/case-study.js";
 import { animateGallery } from "./project/gallery.js";
 
 const HOME_TITLE = "Tarik Bouabid — Product designer";
@@ -48,37 +48,19 @@ export function panelShift(view) {
   return width / 2;
 }
 
-async function openProject(slug, previous) {
+/** Ouvre l'étude de cas directement (sans zoom de caméra) ; le plan de travail reste derrière. */
+function openProject(slug, previous) {
   const id = PROJECTS.findIndex(p => p.slug === slug);
   const P = PROJECTS[id];
+  const fromHome = previous !== "project";
   dom.panelAbout.classList.remove("open");
   dom.panelContact.classList.remove("open");
-
-  if (previous !== "project") {
-    app.homeState = { off: camera.off.slice(), zoom: camera.zoom };
-    const pending = app.pendingCluster;
-    const cluster = pending && pending.id === id ? pending : nearestCluster(id);
-    app.pendingCluster = null;
-    app.view = "project";
-    dom.frame.classList.add("is-hidden");
-    dom.ticker.style.opacity = "0";
-    // la caméra aplatit la grille et zoome sur le projet
-    if (cluster) {
-      camera.vel = [0, 0];
-      tween(camera, "shift", 0, 400, ease.out);
-      tween(camera, "curve", 0, 620, ease.inOut);
-      const zoom = Math.min((camera.W * 0.82) / (4 * cellSize()), (camera.H * 0.7) / (2 * cellSize()));
-      tween(camera, "zoom", zoom, 650, ease.inOut);
-      await tween(camera, "off", clusterCenter(cluster.cx, cluster.cy), 650, ease.inOut);
-    }
-  }
-
+  app.pendingCluster = null;
   app.view = "project";
+  camera.vel = [0, 0];
+  dom.frame.classList.add("is-hidden");
+  dom.ticker.style.opacity = "0";
   document.body.classList.add("is-project");
-  const [cx, cy] = viewCenter();
-  const cw = 4 * cellSize() * camera.zoom;
-  const ch = 2 * cellSize() * camera.zoom;
-  const fromCover = previous !== "project" ? { x: cx - cw / 2, y: cy - ch / 2, w: cw, h: ch } : null;
 
   renderProject(P, id);
   $("#p-select").value = slug;
@@ -86,23 +68,20 @@ async function openProject(slug, previous) {
   dom.pill.setAttribute("aria-hidden", "false");
   dom.project.classList.add("open");
   dom.project.scrollTop = 0;
-  animateGallery(fromCover);
-  revealText($(".p-text", dom.project), fromCover ? 200 : 80);
+  animateGallery(fromHome);
+  revealText($(".p-text", dom.project), fromHome ? 200 : 80);
   document.title = `${P.title} — Tarik Bouabid`;
   dom.project.focus({ preventScroll: true });
 }
 
-async function closeProject() {
+function closeProject() {
+  hideCursorLabel();
   document.body.classList.remove("is-project");
   dom.project.classList.remove("open");
   dom.pill.classList.remove("on");
   dom.pill.setAttribute("aria-hidden", "true");
   dom.frame.classList.remove("is-hidden");
   dom.ticker.style.opacity = "";
-  const home = app.homeState || { off: camera.off.slice(), zoom: HOME_ZOOM };
-  tween(camera, "curve", 0.32, 600, ease.inOut);
-  tween(camera, "zoom", HOME_ZOOM, 600, ease.inOut);
-  await tween(camera, "off", home.off, 600, ease.inOut);
 }
 
 /** Affiche la vue correspondant à l'adresse courante. */
@@ -113,9 +92,9 @@ export async function go() {
   camera.dirty = true;
 
   if (route.view === "project") {
-    await openProject(route.slug, previous);
+    openProject(route.slug, previous);
   } else {
-    if (previous === "project") await closeProject();
+    if (previous === "project") closeProject();
     const view = (app.view = route.view);
     const { panelAbout, panelContact } = dom;
     panelAbout.classList.toggle("open", view === "about");

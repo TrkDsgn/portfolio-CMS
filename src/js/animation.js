@@ -7,6 +7,8 @@ import { render, stepInk } from "./webgl/renderer.js";
 
 /** Vitesse de la dérive automatique de l'accueil, en px/s. */
 const DRIFT = 16;
+/** Glissement après un lâcher : part de la vitesse conservée à chaque image (plus proche de 1 = plus long). */
+const INERTIA = 0.94;
 let lastNow = 0;
 
 const readoutLeft = $("#ro-l");
@@ -33,7 +35,7 @@ function frame(now) {
   const still = Math.abs(camera.vel[0]) + Math.abs(camera.vel[1]) < 0.5;
   if (app.view !== "project" && !app.dragging && app.hoverId === -1 && !reducedMotion.matches && still) {
     // vu de loin (chargement), le globe tourne nettement plus vite
-    camera.off[0] += (DRIFT * (1 + 40 * camera.orbit) * dt) / 1000 / camera.zoom;
+    camera.off[0] += (DRIFT * (1 + 6 * camera.orbit) * dt) / 1000 / camera.zoom;
     camera.dirty = true;
   }
 
@@ -54,8 +56,8 @@ function frame(now) {
   if (!app.dragging && (Math.abs(camera.vel[0]) > 0.02 || Math.abs(camera.vel[1]) > 0.02)) {
     camera.off[0] += camera.vel[0];
     camera.off[1] += camera.vel[1];
-    camera.vel[0] *= 0.86;
-    camera.vel[1] *= 0.86;
+    camera.vel[0] *= INERTIA;
+    camera.vel[1] *= INERTIA;
     camera.dirty = true;
   }
 

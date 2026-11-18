@@ -24,8 +24,6 @@ const UNIFORMS = [
   "uCell",
   "uTex",
   "uN",
-  "uHover",
-  "uHoverAmt",
   "uBg",
   "uLine",
   "uDeep",
@@ -44,6 +42,7 @@ const UNIFORMS = [
   "uOrbit",
   "uPaint",
   "uLineAlpha",
+  "uGlobeAlpha",
 ];
 const uni = {};
 let atlasTexture;
@@ -185,8 +184,6 @@ export function render() {
   gl.uniform1f(uni.uCurve, curveNow());
   gl.uniform1f(uni.uCell, cellSize());
   gl.uniform1f(uni.uN, gridCount);
-  gl.uniform2f(uni.uHover, camera.hover[0], camera.hover[1]);
-  gl.uniform1f(uni.uHoverAmt, camera.hoverAmt);
   gl.uniform3fv(uni.uBg, colors.bg);
   gl.uniform3fv(uni.uLine, colors.line);
   gl.uniform3fv(uni.uDeep, colors.deep);
@@ -198,6 +195,7 @@ export function render() {
   gl.uniform1f(uni.uOrbit, camera.orbit);
   gl.uniform1f(uni.uPaint, camera.paint);
   gl.uniform1f(uni.uLineAlpha, 0.8); // filets discrets
+  gl.uniform1f(uni.uGlobeAlpha, camera.globeAlpha);
   gl.uniform1f(uni.uTime, camera.time);
   ["uS0", "uS1", "uS2", "uS3"].forEach((name, i) => gl.uniform3fv(uni[name], colors.spectrum[i]));
   gl.uniform1f(uni.uInkOn, inkActive() ? 1 : 0);

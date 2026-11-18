@@ -6,30 +6,21 @@ import { camera, app, dom } from "./state.js";
 import { inkPointer, inkLift } from "./webgl/ink.js";
 import { tween, screenToWorld, clusterAt, clusterCenter, nearestCluster, cellSize } from "./camera.js";
 
-const { canvas, hovertag } = dom;
+const { canvas } = dom;
+/** Amplitude du glisser (1 = le plan suit exactement la souris). */
+const DRAG = 1.6;
+/** Distance parcourue par cran de molette, × le défilement du navigateur. */
+const WHEEL = 3;
 let moved = false;
 let last = [0, 0];
 let lastT = 0;
 
-/** Survol d'un cluster : il grossit et une étiquette suit la souris. setHover(null) l'efface. */
-export function setHover(cluster, mx, my) {
+/** Survol d'un cluster : le curseur devient une main (aucun autre effet). setHover(null) l'efface. */
+export function setHover(cluster) {
   if (cluster) {
-    if (camera.hover[0] !== cluster.cx || camera.hover[1] !== cluster.cy) {
-      camera.hover = [cluster.cx, cluster.cy];
-      camera.hoverAmt = 0;
-      tween(camera, "hoverAmt", 1, 350, ease.out);
-    }
-    const P = PROJECTS[cluster.id];
-    if (app.hoverId !== cluster.id) {
-      hovertag.textContent = `${P.title} — ${P.category} — ${P.year}`;
-      app.hoverId = cluster.id;
-    }
-    hovertag.style.transform = `translate(${mx + 16}px, ${my + 18}px)`;
-    hovertag.classList.add("on");
+    app.hoverId = cluster.id;
     canvas.classList.add("on-card");
   } else {
-    if (camera.hoverAmt > 0) tween(camera, "hoverAmt", 0, 250, ease.out);
-    hovertag.classList.remove("on");
     canvas.classList.remove("on-card");
     app.hoverId = -1;
   }
@@ -49,8 +40,8 @@ function onPointerDown(e) {
 function onPointerMove(e) {
   if (app.view !== "project" && e.pointerType === "mouse") inkPointer(e.clientX, e.clientY);
   if (app.dragging) {
-    const dx = e.clientX - last[0];
-    const dy = e.clientY - last[1];
+    const dx = (e.clientX - last[0]) * DRAG;
+    const dy = (e.clientY - last[1]) * DRAG;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
     camera.off[0] -= dx / camera.zoom;
     camera.off[1] -= dy / camera.zoom;
@@ -90,7 +81,7 @@ function endDrag(e) {
 function onWheel(e) {
   if (app.view === "project") return;
   e.preventDefault();
-  const scale = e.deltaMode === 1 ? 32 : 1; // molette en lignes → px
+  const scale = (e.deltaMode === 1 ? 32 : 1) * WHEEL; // molette en lignes → px
   const dx = (e.shiftKey ? e.deltaY : e.deltaX) * scale;
   const dy = (e.shiftKey ? 0 : e.deltaY) * scale;
   if (reducedMotion.matches) {
@@ -123,8 +114,6 @@ function onListFocus(e) {
   const cluster = nearestCluster(id);
   if (!cluster) return;
   tween(camera, "off", clusterCenter(cluster.cx, cluster.cy), 600, ease.inOut);
-  camera.hover = [cluster.cx, cluster.cy];
-  tween(camera, "hoverAmt", 1, 350, ease.out);
 }
 
 /** Branche les écouteurs. */

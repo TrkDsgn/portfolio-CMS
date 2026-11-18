@@ -1,7 +1,7 @@
 /* Construction de la page d'une étude de cas : colonne de texte, galerie, lien vers le projet suivant. */
 import { $, $$, esc } from "../utils.js";
 import { PROJECTS } from "../content.js";
-import { dom } from "../state.js";
+import { dom, app } from "../state.js";
 import { drawTile, drawProjectCover } from "../webgl/tiles.js";
 import { renderMedia, stopLoops } from "./gallery.js";
 
@@ -119,8 +119,30 @@ function arrangeFlow() {
   if (next) next.style.order = sequence.length + 10;
 }
 
+/* Étiquette qui suit le curseur sur l'étude de cas : les rôles du projet défilent dedans */
+export function initCursorLabel() {
+  const tag = dom.hovertag;
+  dom.project.addEventListener("pointermove", e => {
+    if (e.pointerType !== "mouse" || app.view !== "project") return;
+    tag.style.transform = `translate(${e.clientX + 18}px, ${e.clientY + 20}px)`;
+    tag.classList.add("on", "is-project");
+  });
+  dom.project.addEventListener("pointerleave", () => tag.classList.remove("on"));
+}
+
+/** Retire l'étiquette (fermeture de l'étude de cas). */
+export function hideCursorLabel() {
+  dom.hovertag.classList.remove("on", "is-project");
+}
+
+function setCursorLabel(P) {
+  const text = (P.role.length ? P.role : [P.category]).map(esc).join(" · ");
+  dom.hovertag.innerHTML = `<span class="tag-track"><span>${text} ·&nbsp;</span><span>${text} ·&nbsp;</span></span>`;
+}
+
 /** Affiche le projet P (index id) dans #project. */
 export function renderProject(P, id) {
+  setCursorLabel(P);
   const next = PROJECTS[(id + 1) % PROJECTS.length];
   dom.project.innerHTML = `<div class="p-wrap">
     ${textColumn(P)}

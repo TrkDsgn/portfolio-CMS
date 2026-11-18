@@ -25,11 +25,10 @@ export const camera = {
   globeRadius: 80, // rayon du globe à l'écran pendant le chargement (px)
   spectrum: 0, // lignes colorées par le dégradé (1 = globe du chargement)
   paint: 0, // étendue de la couleur sur le globe (0 → 1 pendant le chargement)
-  tiles: 1, // opacité des vignettes (0 pendant le chargement)
+  globeAlpha: 1, // visibilité du globe (0 → 1 au début du chargement)
+  tiles: 1, // apparition des vignettes (0 → 1 à la fin du chargement, vignette par vignette)
   time: 0, // horloge (s), pour le défilement des couleurs
   dir: [0, 1], // direction du mouvement
-  hover: [1e6, 1e6], // cluster survolé
-  hoverAmt: 0,
   dirty: true, // le canvas doit être redessiné
   cell: 72, // taille d'une cellule de la grille, en px
   W: 1,
@@ -42,7 +41,6 @@ export const camera = {
 export const app = {
   view: "home", // "home" | "about" | "contact" | "project"
   pendingCluster: null, // cluster cliqué, pour que la caméra aille sur celui-là
-  homeState: null, // position de la caméra avant d'ouvrir un projet
   dragging: false,
   hoverId: -1, // projet survolé
 };
