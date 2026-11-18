@@ -15,9 +15,24 @@ export const cellSize = () => camera.cell;
    Le même calcul sert au shader (webgl/shaders.js) et à screenToWorld, pour viser juste au clic. */
 
 const HOME_CURVE = 0.32;
-const TILT = 0.68; // inclinaison de la caméra à l'accueil, en radians (perspective : le haut s'éloigne)
-const RADIUS = 4.2; // rayon de la sphère à l'accueil, × la plus grande dimension de l'écran (grand = presque plat)
-const FOCAL = 1.1; // focale, × la plus grande dimension de l'écran
+const TILT = 0.3; // inclinaison de la caméra à l'accueil, en radians (perspective : le haut s'éloigne)
+const RADIUS = 4.2; // rayon de la sphère à l'accueil, × la taille de l'écran (grand = presque plat)
+const FOCAL = 1.0; // focale, × la taille de l'écran
+
+/* Taille d'une carte de projet au centre de l'accueil, en part de la largeur de l'écran :
+   ~4 à 5 projets par rangée sur ordinateur, 2 à 3 sur tablette, un peu moins de 2 sur téléphone. */
+const CARD_MOBILE = 0.6; // à 480 px de large et moins
+const CARD_DESKTOP = 0.21; // à 1600 px de large et plus
+
+/** « Taille » de l'écran pour la caméra : la même perspective quel que soit le format (portrait ou paysage). */
+const screenSize = () => Math.hypot(camera.W, camera.H) * 0.85;
+
+/** Zoom de l'accueil pour que les cartes aient la bonne taille à l'écran. */
+export function homeZoom() {
+  const t = Math.min(1, Math.max(0, Math.log(camera.W / 480) / Math.log(1600 / 480)));
+  const fraction = CARD_MOBILE + (CARD_DESKTOP - CARD_MOBILE) * t;
+  return (fraction * camera.W) / (4 * camera.cell);
+}
 
 /** Courbure effective (plate si les animations sont réduites). */
 export const curveNow = () => (reducedMotion.matches ? 0 : camera.curve);
@@ -34,7 +49,7 @@ export function viewCenter() {
 
 /** Paramètres de projection : focale, inclinaison, rayon (0 = plan), hauteur de la caméra (px). */
 export function projection() {
-  const size = Math.max(camera.W, camera.H);
+  const size = screenSize();
   const k = Math.max(0, curveNow() / HOME_CURVE);
   const o = Math.min(1, Math.max(0, camera.orbit));
   const focal = FOCAL * size;

@@ -2,7 +2,7 @@
 import { mobileQuery, reducedMotion } from "../utils.js";
 import { PROJECTS } from "../content.js";
 import { camera, dom, MAX_PROJECTS, gridCount } from "../state.js";
-import { cellSize, viewCenter, projection, curveNow } from "../camera.js";
+import { cellSize, viewCenter, projection, curveNow, homeZoom } from "../camera.js";
 import { VERTEX_SHADER, FRAGMENT_SHADER } from "./shaders.js";
 import { drawProjectCover } from "./tiles.js";
 import { inkCanvas, updateInk, inkActive, resizeInk, readInkColors } from "./ink.js";
@@ -159,6 +159,7 @@ export function resize() {
   camera.dpr = Math.min(devicePixelRatio || 1, 2); // pleine résolution sur écran Retina
   camera.W = innerWidth;
   camera.H = innerHeight;
+  camera.zoom = homeZoom(); // cartes de taille constante par rapport à l'écran
   dom.canvas.width = Math.round(camera.W * camera.dpr);
   dom.canvas.height = Math.round(camera.H * camera.dpr);
   if (gl) gl.viewport(0, 0, dom.canvas.width, dom.canvas.height);

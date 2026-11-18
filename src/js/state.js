@@ -7,16 +7,13 @@ export const MAX_PROJECTS = 16;
 /** Nombre de projets réellement posés sur la grille. */
 export const gridCount = Math.min(PROJECTS.length, MAX_PROJECTS);
 
-/** Zoom de l'accueil (plus grand = vignettes plus grandes). */
-export const HOME_ZOOM = 1.45;
-
 /** Caméra et rendu du plan de travail. */
 export const camera = {
   off: [0, 0], // position du centre de la vue, en unités monde
   prev: [0, 0], // position à l'image précédente (pour mesurer la vitesse)
   vel: [0, 0], // inertie après un glisser
   target: null, // destination de la molette (suivie en douceur)
-  zoom: HOME_ZOOM,
+  zoom: 1, // recalculé à chaque redimensionnement (camera.js : homeZoom)
   curve: 0.32, // courbure de la grille (0 = plate)
   shift: 0, // décalage horizontal quand un panneau est ouvert
   aberration: 0, // séparation des couleurs pendant un mouvement rapide
